@@ -11,10 +11,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const { auth } = getSupabase()
-    auth.getSession().then(({ data }) => {
-      setSession(data.session)
-      setLoading(false)
-    })
+    auth
+      .getSession()
+      .then(({ data }) => setSession(data.session))
+      .catch(() => setSession(null))
+      .finally(() => setLoading(false))
     const { data } = auth.onAuthStateChange((_event, next) => {
       setSession(next)
       setLoading(false)
@@ -23,8 +24,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const signOut = async () => {
-    await getSupabase().auth.signOut()
-    queryClient.clear()
+    try {
+      await getSupabase().auth.signOut()
+    } finally {
+      // drop cached data even if the network call fails
+      queryClient.clear()
+    }
   }
 
   return (

@@ -28,8 +28,13 @@ const insert = await fetch(endpoint, {
   body: JSON.stringify({ user_id: '00000000-0000-0000-0000-000000000000' }),
 })
 
-const readBlocked = !select.ok || (Array.isArray(rows) && rows.length === 0)
-const writeBlocked = !insert.ok
+// A bad key, paused project or server error must not look like "RLS works".
+if (!select.ok) {
+  console.error(`FAIL: read request was rejected with HTTP ${select.status}`)
+  process.exit(1)
+}
+const readBlocked = Array.isArray(rows) && rows.length === 0
+const writeBlocked = insert.status === 401 || insert.status === 403
 
 if (readBlocked && writeBlocked) {
   console.log('PASS: anonymous read returns no rows, anonymous insert rejected')
