@@ -106,4 +106,4 @@ This is a personal project, but issues and suggestions are welcome. Please keep 
 
 ## License
 
-No license has been chosen yet. Until one is added, all rights are reserved by the author.
+Source code is released under the [MIT License](LICENSE). Exercise illustrations and data added later keep their own licenses (for example CC BY-SA 4.0 for Workout Guide artwork); see the Credits screen and the section above.
