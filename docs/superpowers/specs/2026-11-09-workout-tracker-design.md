@@ -13,6 +13,7 @@ Mobile-first responsive web app, deployed on Vercel, installable as a PWA. UI la
 ## 2. Goals, non-goals, anti-goals
 
 Goals
+
 - Five v1 modules: Dashboard, Exercise Library, Routines, Active Workout, Progress (plus Settings and Credits).
 - Progress is stored online in Supabase and survives device or browser changes.
 - A large, well-attributed exercise catalog (see section 5), filtered by available equipment by default.
@@ -21,6 +22,7 @@ Goals
 - A visible post-v1 roadmap (section 10).
 
 Non-goals (v1)
+
 - Native apps, social features, leaderboards, XP/levels/coins.
 - Automatic training recommendations or progression algorithms.
 - Offline-first sync or conflict resolution.
@@ -28,6 +30,7 @@ Non-goals (v1)
 - Spanish or any second UI language.
 
 Anti-goals (a failure even if it technically works)
+
 - Pushy gamification: push notifications, guilt messages, lost-streak screens.
 - Any claim that an exercise or routine is medically safe or suitable for a person. The app records and organizes training; it is not professional advice. State this once, in Settings/Credits and first run.
 - Invented exercise data or metadata presented as coming from a source.
@@ -42,6 +45,7 @@ Initial user: beginner, sedentary lifestyle, trains at home 3 times a week, equi
 React, TypeScript, Vite, Tailwind CSS, shadcn/ui, Lucide, React Router, Recharts, Zod, vite-plugin-pwa with Workbox, Vitest and React Testing Library, ESLint and Prettier. Deploy on Vercel.
 
 My calls (not yet agreed by the owner beyond this document):
+
 - `@supabase/supabase-js` replaces Dexie/IndexedDB from the original spec.
 - TanStack Query for server state; no Zustand.
 - Playwright is added once the core flow (routine, then session, then save) exists, starting with one E2E test of that flow.
@@ -53,16 +57,19 @@ Folder layout (owner's proposal, adapted): `src/app` (router, providers), `src/c
 The catalog is static content bundled with the app (JSON plus images), not stored in Supabase. It is read-only, works offline, and is built by a reproducible import script.
 
 Sources (inspected 2026-11-09):
+
 - Primary: `@bryllim/workout-guide` 1.0.0. 302 exercises, 3 frames each. Frames are 512x512 PNG, not SVG. Manifest fields: `id, slug, name, exerciseType, equipment` (single string), `primaryMuscle, secondaryMuscles, isStretch, frames, attribution`. No instructions, description or difficulty. Equipment counts include Bodyweight 111, Wall 3, Chair 1. Code MIT; artwork CC BY-SA 4.0; 76 frames derive from Everkinetic (CC BY-SA 4.0) with per-frame attribution in the manifest.
 - Text and metadata: `yuhonas/free-exercise-db`. 876 exercises with `level`, `mechanic`, `force`, `category`, primary and secondary muscles, equipment ("body only" 111), and instructions (871 of 876). Maintainer states the project is Unlicense. Its images have unknown provenance and license: the maintainer says use is "at your own risk". Do not ship these images.
 - Later candidates (not v1): `exercemus/exercises` (MIT code, per-exercise data license and author, richer fields) and wger (AGPL code, per-entry CC data). Both need per-exercise attribution handling.
 
 Catalog tiers:
+
 1. Illustrated: Workout Guide exercises with their 3 frames. Instructions, level and extra muscle data merged from free-exercise-db when a name matches.
 2. Text-only: free-exercise-db exercises with no Workout Guide match. Show a placeholder instead of art.
 3. Project-authored: gap fillers (for example chair sit-to-stand, which neither source has). Clearly labeled as written by this project.
 
 Rules
+
 - Own domain model; do not mirror source shapes. Each exercise: stable ID, name, description (if any), primary muscle, secondary muscles, equipment (normalized, multi-valued), type (reps/duration), level, instructions, illustrations, and per-field provenance (source name, URL, license, author, "project-authored" flag).
 - Never mark an exercise beginner unless a source says so. "Suggested" means bodyweight/wall/chair equipment and source level beginner.
 - "Calisthenics" is a derived label (equipment-based), marked as derived.
@@ -78,6 +85,7 @@ Supabase is the source of truth for user data. Single user, but authentication i
 User data: routines and routine exercises (series, reps or seconds, rest, order, day labels A/B/C), sessions with set logs and notes, body weight entries, settings (equipment, weekly goal, theme).
 
 Rules
+
 - A completed session stores a snapshot of the routine and its exercises (JSONB). Editing or deleting a routine never changes history.
 - Exercises are referenced by stable catalog ID.
 - Streaks and badges are computed from session history, not stored (revisit if it becomes slow).
@@ -118,6 +126,7 @@ Settings: equipment available, weekly goal, theme (light/dark), export/import, r
 ## 10. Phases and roadmap
 
 v1 phases (small deliverables, tests after each):
+
 1. Foundation (scaffolding, requested by the owner for the empty folder): Vite + React + TypeScript project; Tailwind, shadcn/ui, Lucide, React Router, TanStack Query, Zod, Recharts, vite-plugin-pwa installed and configured; the folder layout from section 4 with placeholder routes for all modules; responsive shell with bottom navigation and light/dark theme; Supabase client plus `.env.example` and an initial `supabase/` migrations folder; auth and RLS; ESLint, Prettier, Vitest and RTL configured with one smoke test; `.gitignore` (including `.superpowers/`); `git init`; `CLAUDE.md` with conventions; README; Vercel-ready build.
 2. Catalog: import pipeline, normalized data, library UI, filters, detail, credits.
 3. Routines: CRUD, starter A/B/C, settings for equipment and goal.

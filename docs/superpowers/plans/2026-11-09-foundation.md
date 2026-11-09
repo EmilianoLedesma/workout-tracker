@@ -35,10 +35,12 @@
 ### Task 1: Project scaffold, tooling and git
 
 **Files:**
+
 - Create: `package.json`, `vite.config.ts`, `tsconfig*.json`, `index.html`, `src/main.tsx`, `src/App.tsx`, `src/styles/index.css`, `eslint.config.js`, `.prettierrc`, `vitest.setup.ts`
 - Test: `src/App.test.tsx`
 
 **Interfaces:**
+
 - Produces: `@/` import alias mapped to `src/`; `npm run dev|build|lint|test|typecheck` scripts; `export default function App(): JSX.Element`.
 
 - [ ] **Step 1: Scaffold in a scratch folder, then copy in.** Run `npm create vite@latest <tmp-dir> -- --template react-ts` outside the project, copy its files into the project root without overwriting `.gitignore`, `.env.example`, `.env`, `docs/`, `.claude/`. Merge any extra `.gitignore` lines from the template.
@@ -55,11 +57,13 @@
 ### Task 2: shadcn/ui and theme
 
 **Files:**
+
 - Create: `components.json`, `src/lib/utils.ts`, `src/components/ui/button.tsx`, `src/app/providers/ThemeProvider.tsx`, `src/hooks/useTheme.ts`
 - Modify: `src/styles/index.css` (CSS variables for light/dark)
 - Test: `src/app/providers/ThemeProvider.test.tsx`
 
 **Interfaces:**
+
 - Produces: `ThemeProvider({children})`; `useTheme(): { theme: "light" | "dark" | "system"; setTheme(t): void }`. The provider sets class `dark` on `<html>` when the resolved theme is dark.
 - Consumes: `@/` alias (Task 1).
 
@@ -73,11 +77,13 @@
 ### Task 3: Router and responsive shell
 
 **Files:**
+
 - Create: `src/app/router/index.tsx`, `src/components/layout/AppShell.tsx`, `src/components/layout/BottomNav.tsx`, `src/features/{dashboard,exercises,routines,progress,settings}/<Name>Page.tsx` (placeholder pages), `src/features/workouts/WorkoutPage.tsx`, `src/features/NotFoundPage.tsx`
 - Modify: `src/App.tsx`
 - Test: `src/components/layout/BottomNav.test.tsx`, `src/app/router/router.test.tsx`
 
 **Interfaces:**
+
 - Produces: routes `/` (Dashboard), `/library`, `/routines`, `/workout/:routineId`, `/progress`, `/settings`, `*` (NotFound); `createAppRouter(): Router`; `AppShell` renders `<Outlet />` plus `BottomNav` (links: Home, Library, Routines, Progress, Settings, using Lucide icons and `NavLink` active state).
 - Consumes: `ThemeProvider` (Task 2).
 
@@ -90,11 +96,13 @@
 ### Task 4: Env validation, Supabase client, query provider
 
 **Files:**
+
 - Create: `src/lib/env.ts`, `src/lib/supabase.ts`, `src/app/providers/QueryProvider.tsx`, `src/components/layout/ConfigError.tsx`
 - Modify: `src/App.tsx`, `src/main.tsx`
 - Test: `src/lib/env.test.ts`, `src/components/layout/ConfigError.test.tsx`
 
 **Interfaces:**
+
 - Produces: `parseEnv(raw: Record<string, unknown>): { ok: true; env: { supabaseUrl: string; supabaseAnonKey: string } } | { ok: false; missing: string[] }` (Zod schema: both vars non-empty strings, URL must be a valid URL); `getSupabase(): SupabaseClient`; `QueryProvider({children})`; `ConfigError({missing: string[]})`.
 
 - [ ] **Step 1: Install** `@supabase/supabase-js`, `@tanstack/react-query`, `zod`.
@@ -107,11 +115,13 @@
 ### Task 5: Authentication (magic link)
 
 **Files:**
+
 - Create: `src/features/auth/AuthProvider.tsx`, `src/features/auth/useSession.ts`, `src/features/auth/RequireAuth.tsx`, `src/features/auth/LoginPage.tsx`
 - Modify: `src/app/router/index.tsx` (add `/login`; wrap shell routes in `RequireAuth`), `src/features/settings/SettingsPage.tsx` (Sign out button)
 - Test: `src/features/auth/RequireAuth.test.tsx`, `src/features/auth/LoginPage.test.tsx`, `src/features/auth/AuthProvider.test.tsx`
 
 **Interfaces:**
+
 - Produces: `AuthProvider` exposing `useSession(): { session: Session | null; loading: boolean; signOut(): Promise<void> }`; `LoginPage` calls `supabase.auth.signInWithOtp({ email, options: { emailRedirectTo: window.location.origin } })`; `RequireAuth` redirects signed-out users to `/login` with the original location in router state.
 - Consumes: `getSupabase()`, `QueryProvider` (Task 4). Tests mock `getSupabase` (no network).
 
@@ -125,9 +135,11 @@
 ### Task 6: Initial Supabase migration and RLS check
 
 **Files:**
+
 - Create: `supabase/migrations/0001_user_settings.sql`, `supabase/README.md`, `scripts/verify-rls.mjs`
 
 **Interfaces:**
+
 - Produces: table `public.user_settings` with columns `user_id uuid primary key references auth.users on delete cascade`, `weekly_goal int not null default 3 check (weekly_goal between 1 and 7)`, `equipment text[] not null default '{bodyweight,wall,chair}'`, `theme text not null default 'system' check (theme in ('light','dark','system'))`, `updated_at timestamptz not null default now()`; RLS enabled; policies allow select, insert, update and delete only where `user_id = auth.uid()`.
 
 - [ ] **Step 1: Write** the migration SQL as specified above. `supabase/README.md` documents how to apply it (SQL editor or Supabase CLI) and that every future table must enable RLS with an `auth.uid()` policy.
@@ -139,10 +151,12 @@
 ### Task 7: Docs, Vercel config and final verification
 
 **Files:**
+
 - Create: `CLAUDE.md`, `README.md`, `vercel.json`
 - Modify: `docs/superpowers/specs/2026-11-09-workout-tracker-design.md` (record the PWA/Recharts deviation under section 11b)
 
 **Interfaces:**
+
 - Produces: `vercel.json` with a rewrite sending all non-file paths to `/index.html` (SPA routing); `CLAUDE.md` listing conventions: folder layout, scripts, test style (RTL, Supabase mocked), RLS rule, no service-role key, English-only copy, catalog license rules, and pointers to the spec, PRD and this plan.
 
 - [ ] **Step 1: Write** `CLAUDE.md`, `README.md` (what the app is, setup with `.env.example`, scripts, deploy to Vercel with the two env vars, the not-medical-advice note) and `vercel.json`.

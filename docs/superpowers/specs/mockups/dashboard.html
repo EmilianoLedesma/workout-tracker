@@ -1,70 +1,341 @@
 <h2>Dashboard: which layout feels right?</h2>
-<p class="subtitle">Mobile view. Quiet gamification: weekly ring + streak in weeks, no popups.</p>
+<p class="subtitle">
+  Mobile view. Quiet gamification: weekly ring + streak in weeks, no popups.
+</p>
 
 <div class="cards">
   <div class="card" data-choice="a" onclick="toggleSelect(this)">
-    <div class="card-image" style="display:flex;justify-content:center;padding:16px;background:#f4f4f5">
-      <div style="width:280px;background:#fff;border-radius:24px;padding:18px;box-shadow:0 2px 12px #0002;font-family:system-ui;color:#111">
-        <div style="font-size:13px;color:#777">Wed, Nov 11</div>
-        <div style="font-size:22px;font-weight:700;margin:2px 0 14px">Good evening</div>
-        <div style="background:#111;color:#fff;border-radius:18px;padding:16px">
-          <div style="font-size:12px;opacity:.7">NEXT UP</div>
-          <div style="font-size:20px;font-weight:700;margin:2px 0">Routine B · Lower body</div>
-          <div style="font-size:13px;opacity:.8;margin-bottom:12px">6 exercises · ~25 min</div>
-          <div style="background:#22c55e;color:#04210f;text-align:center;font-weight:700;padding:12px;border-radius:12px">Start session</div>
+    <div
+      class="card-image"
+      style="
+        display: flex;
+        justify-content: center;
+        padding: 16px;
+        background: #f4f4f5;
+      "
+    >
+      <div
+        style="
+          width: 280px;
+          background: #fff;
+          border-radius: 24px;
+          padding: 18px;
+          box-shadow: 0 2px 12px #0002;
+          font-family: system-ui;
+          color: #111;
+        "
+      >
+        <div style="font-size: 13px; color: #777">Wed, Nov 11</div>
+        <div style="font-size: 22px; font-weight: 700; margin: 2px 0 14px">
+          Good evening
         </div>
-        <div style="display:flex;gap:10px;margin-top:12px">
-          <div style="flex:1;background:#f4f4f5;border-radius:14px;padding:12px">
-            <div style="font-size:12px;color:#777">This week</div>
-            <div style="font-size:20px;font-weight:700">2 / 3</div>
-            <div style="height:6px;background:#ddd;border-radius:3px;margin-top:6px"><div style="width:66%;height:6px;background:#22c55e;border-radius:3px"></div></div>
+        <div
+          style="
+            background: #111;
+            color: #fff;
+            border-radius: 18px;
+            padding: 16px;
+          "
+        >
+          <div style="font-size: 12px; opacity: 0.7">NEXT UP</div>
+          <div style="font-size: 20px; font-weight: 700; margin: 2px 0">
+            Routine B · Lower body
           </div>
-          <div style="flex:1;background:#f4f4f5;border-radius:14px;padding:12px">
-            <div style="font-size:12px;color:#777">Streak</div>
-            <div style="font-size:20px;font-weight:700">5 weeks</div>
-            <div style="font-size:11px;color:#777;margin-top:6px">Mon · Wed · _</div>
+          <div style="font-size: 13px; opacity: 0.8; margin-bottom: 12px">
+            6 exercises · ~25 min
+          </div>
+          <div
+            style="
+              background: #22c55e;
+              color: #04210f;
+              text-align: center;
+              font-weight: 700;
+              padding: 12px;
+              border-radius: 12px;
+            "
+          >
+            Start session
           </div>
         </div>
-        <div style="margin-top:14px;font-size:12px;color:#777">LAST SESSIONS</div>
-        <div style="font-size:13px;padding:6px 0;border-bottom:1px solid #eee">Routine A · Mon · 24 min</div>
-        <div style="font-size:13px;padding:6px 0">Routine C · Fri · 27 min</div>
-        <div style="display:flex;justify-content:space-around;margin-top:14px;font-size:11px;color:#777;border-top:1px solid #eee;padding-top:10px"><span><b style="color:#111">Home</b></span><span>Library</span><span>Routines</span><span>Progress</span></div>
+        <div style="display: flex; gap: 10px; margin-top: 12px">
+          <div
+            style="
+              flex: 1;
+              background: #f4f4f5;
+              border-radius: 14px;
+              padding: 12px;
+            "
+          >
+            <div style="font-size: 12px; color: #777">This week</div>
+            <div style="font-size: 20px; font-weight: 700">2 / 3</div>
+            <div
+              style="
+                height: 6px;
+                background: #ddd;
+                border-radius: 3px;
+                margin-top: 6px;
+              "
+            >
+              <div
+                style="
+                  width: 66%;
+                  height: 6px;
+                  background: #22c55e;
+                  border-radius: 3px;
+                "
+              ></div>
+            </div>
+          </div>
+          <div
+            style="
+              flex: 1;
+              background: #f4f4f5;
+              border-radius: 14px;
+              padding: 12px;
+            "
+          >
+            <div style="font-size: 12px; color: #777">Streak</div>
+            <div style="font-size: 20px; font-weight: 700">5 weeks</div>
+            <div style="font-size: 11px; color: #777; margin-top: 6px">
+              Mon · Wed · _
+            </div>
+          </div>
+        </div>
+        <div style="margin-top: 14px; font-size: 12px; color: #777">
+          LAST SESSIONS
+        </div>
+        <div
+          style="font-size: 13px; padding: 6px 0; border-bottom: 1px solid #eee"
+        >
+          Routine A · Mon · 24 min
+        </div>
+        <div style="font-size: 13px; padding: 6px 0">
+          Routine C · Fri · 27 min
+        </div>
+        <div
+          style="
+            display: flex;
+            justify-content: space-around;
+            margin-top: 14px;
+            font-size: 11px;
+            color: #777;
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+          "
+        >
+          <span><b style="color: #111">Home</b></span
+          ><span>Library</span><span>Routines</span><span>Progress</span>
+        </div>
       </div>
     </div>
-    <div class="card-body"><h3>A · Action first</h3><p>Next routine + big Start button on top. Week ring and streak as small tiles below.</p></div>
+    <div class="card-body">
+      <h3>A · Action first</h3>
+      <p>
+        Next routine + big Start button on top. Week ring and streak as small
+        tiles below.
+      </p>
+    </div>
   </div>
 
   <div class="card" data-choice="b" onclick="toggleSelect(this)">
-    <div class="card-image" style="display:flex;justify-content:center;padding:16px;background:#f4f4f5">
-      <div style="width:280px;background:#fff;border-radius:24px;padding:18px;box-shadow:0 2px 12px #0002;font-family:system-ui;color:#111">
-        <div style="font-size:13px;color:#777">Wed, Nov 11</div>
-        <div style="display:flex;align-items:center;gap:16px;margin:10px 0 14px">
-          <div style="width:96px;height:96px;border-radius:50%;background:conic-gradient(#22c55e 0 240deg,#e5e7eb 240deg);display:flex;align-items:center;justify-content:center">
-            <div style="width:72px;height:72px;border-radius:50%;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center"><b style="font-size:22px">2/3</b><span style="font-size:10px;color:#777">this week</span></div>
+    <div
+      class="card-image"
+      style="
+        display: flex;
+        justify-content: center;
+        padding: 16px;
+        background: #f4f4f5;
+      "
+    >
+      <div
+        style="
+          width: 280px;
+          background: #fff;
+          border-radius: 24px;
+          padding: 18px;
+          box-shadow: 0 2px 12px #0002;
+          font-family: system-ui;
+          color: #111;
+        "
+      >
+        <div style="font-size: 13px; color: #777">Wed, Nov 11</div>
+        <div
+          style="
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin: 10px 0 14px;
+          "
+        >
+          <div
+            style="
+              width: 96px;
+              height: 96px;
+              border-radius: 50%;
+              background: conic-gradient(#22c55e 0 240deg, #e5e7eb 240deg);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+            "
+          >
+            <div
+              style="
+                width: 72px;
+                height: 72px;
+                border-radius: 50%;
+                background: #fff;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+              "
+            >
+              <b style="font-size: 22px">2/3</b
+              ><span style="font-size: 10px; color: #777">this week</span>
+            </div>
           </div>
           <div>
-            <div style="font-size:18px;font-weight:700">5-week streak</div>
-            <div style="font-size:12px;color:#777;margin-top:2px">1 more session keeps it going</div>
+            <div style="font-size: 18px; font-weight: 700">5-week streak</div>
+            <div style="font-size: 12px; color: #777; margin-top: 2px">
+              1 more session keeps it going
+            </div>
           </div>
         </div>
-        <div style="display:flex;justify-content:space-between;margin-bottom:14px">
-          <span style="text-align:center;font-size:11px;color:#777">M<br><span style="display:inline-block;width:20px;height:20px;border-radius:50%;background:#22c55e;margin-top:3px"></span></span>
-          <span style="text-align:center;font-size:11px;color:#777">T<br><span style="display:inline-block;width:20px;height:20px;border-radius:50%;background:#e5e7eb;margin-top:3px"></span></span>
-          <span style="text-align:center;font-size:11px;color:#777">W<br><span style="display:inline-block;width:20px;height:20px;border-radius:50%;background:#22c55e;margin-top:3px"></span></span>
-          <span style="text-align:center;font-size:11px;color:#777">T<br><span style="display:inline-block;width:20px;height:20px;border-radius:50%;background:#e5e7eb;margin-top:3px"></span></span>
-          <span style="text-align:center;font-size:11px;color:#777">F<br><span style="display:inline-block;width:20px;height:20px;border-radius:50%;border:2px dashed #22c55e;margin-top:3px"></span></span>
-          <span style="text-align:center;font-size:11px;color:#777">S<br><span style="display:inline-block;width:20px;height:20px;border-radius:50%;background:#e5e7eb;margin-top:3px"></span></span>
-          <span style="text-align:center;font-size:11px;color:#777">S<br><span style="display:inline-block;width:20px;height:20px;border-radius:50%;background:#e5e7eb;margin-top:3px"></span></span>
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 14px;
+          "
+        >
+          <span style="text-align: center; font-size: 11px; color: #777"
+            >M<br /><span
+              style="
+                display: inline-block;
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+                background: #22c55e;
+                margin-top: 3px;
+              "
+            ></span
+          ></span>
+          <span style="text-align: center; font-size: 11px; color: #777"
+            >T<br /><span
+              style="
+                display: inline-block;
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+                background: #e5e7eb;
+                margin-top: 3px;
+              "
+            ></span
+          ></span>
+          <span style="text-align: center; font-size: 11px; color: #777"
+            >W<br /><span
+              style="
+                display: inline-block;
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+                background: #22c55e;
+                margin-top: 3px;
+              "
+            ></span
+          ></span>
+          <span style="text-align: center; font-size: 11px; color: #777"
+            >T<br /><span
+              style="
+                display: inline-block;
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+                background: #e5e7eb;
+                margin-top: 3px;
+              "
+            ></span
+          ></span>
+          <span style="text-align: center; font-size: 11px; color: #777"
+            >F<br /><span
+              style="
+                display: inline-block;
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+                border: 2px dashed #22c55e;
+                margin-top: 3px;
+              "
+            ></span
+          ></span>
+          <span style="text-align: center; font-size: 11px; color: #777"
+            >S<br /><span
+              style="
+                display: inline-block;
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+                background: #e5e7eb;
+                margin-top: 3px;
+              "
+            ></span
+          ></span>
+          <span style="text-align: center; font-size: 11px; color: #777"
+            >S<br /><span
+              style="
+                display: inline-block;
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+                background: #e5e7eb;
+                margin-top: 3px;
+              "
+            ></span
+          ></span>
         </div>
-        <div style="background:#f4f4f5;border-radius:16px;padding:14px">
-          <div style="font-size:12px;color:#777">NEXT UP</div>
-          <div style="font-size:17px;font-weight:700;margin:2px 0 10px">Routine B · Lower body</div>
-          <div style="background:#111;color:#fff;text-align:center;font-weight:700;padding:11px;border-radius:12px">Start session</div>
+        <div style="background: #f4f4f5; border-radius: 16px; padding: 14px">
+          <div style="font-size: 12px; color: #777">NEXT UP</div>
+          <div style="font-size: 17px; font-weight: 700; margin: 2px 0 10px">
+            Routine B · Lower body
+          </div>
+          <div
+            style="
+              background: #111;
+              color: #fff;
+              text-align: center;
+              font-weight: 700;
+              padding: 11px;
+              border-radius: 12px;
+            "
+          >
+            Start session
+          </div>
         </div>
-        <div style="margin-top:12px;font-size:12px;color:#777">Latest: 🏅 10 sessions</div>
-        <div style="display:flex;justify-content:space-around;margin-top:12px;font-size:11px;color:#777;border-top:1px solid #eee;padding-top:10px"><span><b style="color:#111">Home</b></span><span>Library</span><span>Routines</span><span>Progress</span></div>
+        <div style="margin-top: 12px; font-size: 12px; color: #777">
+          Latest: 🏅 10 sessions
+        </div>
+        <div
+          style="
+            display: flex;
+            justify-content: space-around;
+            margin-top: 12px;
+            font-size: 11px;
+            color: #777;
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+          "
+        >
+          <span><b style="color: #111">Home</b></span
+          ><span>Library</span><span>Routines</span><span>Progress</span>
+        </div>
       </div>
     </div>
-    <div class="card-body"><h3>B · Progress first</h3><p>Weekly ring and streak on top, day dots, then next routine. More motivating, Start button slightly lower.</p></div>
+    <div class="card-body">
+      <h3>B · Progress first</h3>
+      <p>
+        Weekly ring and streak on top, day dots, then next routine. More
+        motivating, Start button slightly lower.
+      </p>
+    </div>
   </div>
 </div>
