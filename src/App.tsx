@@ -1,3 +1,13 @@
+import { RouterProvider } from 'react-router'
+import { ThemeProvider } from '@/app/providers/ThemeProvider'
+import { createAppRouter } from '@/app/router'
+
+const router = createAppRouter()
+
 export default function App() {
-  return <h1 className="p-4 text-2xl font-bold">Workout Tracker</h1>
+  return (
+    <ThemeProvider>
+      <RouterProvider router={router} />
+    </ThemeProvider>
+  )
 }
