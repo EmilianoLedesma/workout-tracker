@@ -9,6 +9,7 @@ export type FrameCredit = {
   exerciseId: string
   creator: string
   license: string
+  licenseUrl: string
   sourceUrl?: string
   changes?: string
 }

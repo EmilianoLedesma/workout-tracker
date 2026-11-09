@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import { MemoryRouter, Route, Routes } from 'react-router'
 import type { Exercise, Provenance } from '@/types/exercise'
 import ExerciseDetailPage from './ExerciseDetailPage'
@@ -128,10 +128,12 @@ it('lists the illustration creator, license, source and changes', () => {
   expect(block).toHaveTextContent('Bryl Lim')
   expect(block).toHaveTextContent('CC BY-SA 4.0')
   expect(block).toHaveTextContent('Rasterized and recolored.')
-  expect(block.querySelector('a')).toHaveAttribute(
-    'href',
-    'https://github.com/everkinetic/data',
-  )
+  expect(
+    within(block).getByRole('link', { name: 'CC BY-SA 4.0' }),
+  ).toHaveAttribute('href', 'https://creativecommons.org/licenses/by-sa/4.0/')
+  expect(
+    within(block).getByRole('link', { name: /everkinetic/ }),
+  ).toHaveAttribute('href', 'https://github.com/everkinetic/data')
 })
 
 it('marks project-authored exercises as unreviewed', () => {

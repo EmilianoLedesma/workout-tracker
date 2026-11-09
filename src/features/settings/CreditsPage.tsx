@@ -54,7 +54,15 @@ export default function CreditsPage() {
                   <span className="font-medium">
                     {label(credit.exerciseId.replace(/^wg-/, ''))}
                   </span>
-                  : {credit.creator}, {credit.license}
+                  : {credit.creator},{' '}
+                  <a
+                    href={credit.licenseUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="underline"
+                  >
+                    {credit.license}
+                  </a>
                   {credit.sourceUrl && (
                     <>
                       {' '}

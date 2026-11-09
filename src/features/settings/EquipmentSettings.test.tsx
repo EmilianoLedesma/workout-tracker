@@ -49,6 +49,19 @@ it('saves the remaining items when an item is unchecked', async () => {
   )
 })
 
+it('updates the checkbox immediately and keeps rapid toggles', async () => {
+  mocks.upsert.mockImplementation(() => new Promise(() => {})) // save never finishes
+  renderIt()
+  const chair = await screen.findByRole('checkbox', { name: 'Chair' })
+  await userEvent.click(chair)
+  expect(chair).not.toBeChecked()
+  await userEvent.click(screen.getByRole('checkbox', { name: 'Wall' }))
+  expect(mocks.upsert).toHaveBeenLastCalledWith(
+    expect.objectContaining({ equipment: ['bodyweight'] }),
+    { onConflict: 'user_id' },
+  )
+})
+
 it('shows an error and keeps the checkbox as it was when saving fails', async () => {
   mocks.upsert.mockResolvedValue({ error: { message: 'nope' } })
   renderIt()

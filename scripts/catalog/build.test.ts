@@ -170,6 +170,7 @@ it('builds credits with sources and frame attribution', () => {
     exerciseId: 'wg-plank',
     creator: 'Bryl Lim',
     license: 'CC BY-SA 4.0',
+    licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0/',
     sourceUrl: 'https://github.com/everkinetic/data',
     changes: 'Rasterized and recolored.',
   })

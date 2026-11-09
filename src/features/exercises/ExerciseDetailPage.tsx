@@ -92,7 +92,16 @@ function Detail({ exercise }: { exercise: Exercise }) {
         {framed && (
           <>
             <p>
-              Illustrations by {framed.creator}, {framed.license}.
+              Illustrations by {framed.creator},{' '}
+              <a
+                href={framed.licenseUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="underline"
+              >
+                {framed.license}
+              </a>
+              .
             </p>
             {framed.sourceUrl && (
               <p>

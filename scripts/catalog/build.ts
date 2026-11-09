@@ -276,6 +276,7 @@ export function buildCatalog(input: BuildInput): BuildOutput {
         exerciseId: `wg-${w.slug}`,
         creator: attribution.creator,
         license: attribution.license,
+        licenseUrl: attribution.licenseUrl,
         ...(attribution.source && { sourceUrl: attribution.source.url }),
         ...(attribution.source?.changes && {
           changes: attribution.source.changes,

@@ -73,7 +73,24 @@ export function useUpdateSettings() {
         )
       if (error) throw new Error(error.message)
     },
-    onSuccess: () =>
+    // Show the change immediately and build the next change on top of it,
+    // so quick successive toggles are not lost.
+    onMutate: async (patch) => {
+      const key = ['settings', userId]
+      await queryClient.cancelQueries({ queryKey: key })
+      const previous = queryClient.getQueryData<Settings>(key)
+      queryClient.setQueryData<Settings>(key, {
+        ...(previous ?? DEFAULT_SETTINGS),
+        ...patch,
+      })
+      return { previous }
+    },
+    onError: (_error, _patch, context) => {
+      if (context?.previous) {
+        queryClient.setQueryData(['settings', userId], context.previous)
+      }
+    },
+    onSettled: () =>
       queryClient.invalidateQueries({ queryKey: ['settings', userId] }),
   })
 }

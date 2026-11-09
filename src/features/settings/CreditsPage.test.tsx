@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import type { Credits } from '@/types/credits'
 import CreditsPage from './CreditsPage'
@@ -17,6 +17,7 @@ const credits: Credits = {
       exerciseId: 'wg-wall-sit',
       creator: 'Bryl Lim',
       license: 'CC BY-SA 4.0',
+      licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0/',
       sourceUrl: 'https://github.com/everkinetic/data',
       changes: 'Rasterized and recolored.',
     },
@@ -70,10 +71,12 @@ it('lists illustration attributions with creator, license, source and changes', 
   expect(row).toHaveTextContent('Bryl Lim')
   expect(row).toHaveTextContent('CC BY-SA 4.0')
   expect(row).toHaveTextContent('Rasterized and recolored.')
-  expect(row.querySelector('a')).toHaveAttribute(
-    'href',
-    'https://github.com/everkinetic/data',
-  )
+  expect(
+    within(row).getByRole('link', { name: 'CC BY-SA 4.0' }),
+  ).toHaveAttribute('href', 'https://creativecommons.org/licenses/by-sa/4.0/')
+  expect(
+    within(row).getByRole('link', { name: /everkinetic/ }),
+  ).toHaveAttribute('href', 'https://github.com/everkinetic/data')
 })
 
 it('shows an error when credits cannot be loaded', async () => {
