@@ -154,6 +154,8 @@ Post-v1 roadmap (shown in the app or README so the project visibly moves): progr
 - First run: no wizard. After sign-in the app seeds starter routines and default settings and shows a dismissible banner containing the disclaimer.
 - Approved mockups are copied to `docs/superpowers/specs/mockups/` and committed, so the build does not depend on `.superpowers/`.
 
+- Foundation deviations (milestone 1): `vite-plugin-pwa` and Recharts are installed in milestones 6 and 5 when first used. Linter is oxlint (the Vite template default) because `typescript-eslint` does not support TypeScript 7. Env var is `VITE_SUPABASE_PUBLISHABLE_KEY`. The magic link redirects to the page the user originally opened, which needs a wildcard redirect URL in Supabase.
+
 ## 12. Left to the builder
 
 Auth method details, the exact DB schema, the import script's fuzzy-match approach, final starter exercise selection, component library details, chart styling, the icon set and app name, and test coverage specifics.
