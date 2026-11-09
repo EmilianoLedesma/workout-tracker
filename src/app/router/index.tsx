@@ -8,6 +8,7 @@ import { RequireAuth } from '@/features/auth/RequireAuth'
 import NotFoundPage from '@/features/NotFoundPage'
 import ProgressPage from '@/features/progress/ProgressPage'
 import RoutinesPage from '@/features/routines/RoutinesPage'
+import CreditsPage from '@/features/settings/CreditsPage'
 import SettingsPage from '@/features/settings/SettingsPage'
 import WorkoutPage from '@/features/workouts/WorkoutPage'
 
@@ -27,6 +28,7 @@ export const routes: RouteObject[] = [
       { path: 'workout/:routineId', element: <WorkoutPage /> },
       { path: 'progress', element: <ProgressPage /> },
       { path: 'settings', element: <SettingsPage /> },
+      { path: 'credits', element: <CreditsPage /> },
       { path: '*', element: <NotFoundPage /> },
     ],
   },
