@@ -1,0 +1,51 @@
+[
+  {
+    "slug": "chair-sit-to-stand",
+    "name": "Chair Sit-to-Stand",
+    "aliases": ["Chair Stand", "Sit to Stand"],
+    "primaryMuscle": "quads",
+    "secondaryMuscles": ["glutes"],
+    "equipment": ["chair"],
+    "exerciseType": "reps",
+    "isStretch": false,
+    "instructions": [
+      "Place a sturdy chair against a wall so it cannot slide. Sit near the front edge with your feet flat on the floor, about hip-width apart.",
+      "Lean forward slightly and press through your feet to stand up.",
+      "Pause briefly while standing.",
+      "Lower yourself back onto the chair slowly and under control.",
+      "Repeat for the planned number of repetitions."
+    ]
+  },
+  {
+    "slug": "wall-angel",
+    "name": "Wall Angel",
+    "aliases": ["Wall Slide"],
+    "primaryMuscle": "shoulders",
+    "secondaryMuscles": ["upper-back"],
+    "equipment": ["wall"],
+    "exerciseType": "reps",
+    "isStretch": false,
+    "instructions": [
+      "Stand with your back against a wall, feet a small step away from it.",
+      "Bring your arms up to the sides with elbows bent, keeping your upper arms, elbows and the backs of your hands against the wall as far as feels comfortable.",
+      "Slide your arms slowly up the wall, then back down.",
+      "Move only within a range that feels comfortable, and repeat for the planned number of repetitions."
+    ]
+  },
+  {
+    "slug": "seated-marching",
+    "name": "Seated Marching",
+    "aliases": ["Seated March"],
+    "primaryMuscle": "hips",
+    "secondaryMuscles": ["core"],
+    "equipment": ["chair"],
+    "exerciseType": "reps",
+    "isStretch": false,
+    "instructions": [
+      "Sit tall near the front of a sturdy chair, feet flat on the floor, holding the sides of the seat if you like.",
+      "Lift one knee a little way off the floor, then lower the foot back down.",
+      "Repeat with the other leg, alternating sides in a steady rhythm.",
+      "Continue for the planned number of repetitions."
+    ]
+  }
+]
