@@ -6,12 +6,12 @@ A personal, mobile-first web app to browse exercises, build routines, log workou
 
 ## Status
 
-Early development. Milestone 1 (foundation) is in place: responsive shell, theming, Supabase magic-link sign-in and a row-level-security-protected database. The feature modules below are planned.
+Early development. Milestones 1 (foundation) and 2 (exercise catalog) are in place: responsive shell, theming, Supabase magic-link sign-in, row-level-security-protected settings, and a searchable library of 1,100+ exercises with illustrations and credits. The Library, exercise detail and Credits pages are public; everything personal needs sign-in.
 
 | Module                 | Status  |
 | ---------------------- | ------- |
 | App shell, auth, theme | Done    |
-| Exercise library       | Planned |
+| Exercise library       | Done    |
 | Routines (A/B/C)       | Planned |
 | Active workout         | Planned |
 | Progress and streaks   | Planned |
@@ -58,15 +58,16 @@ npm run dev
 
 ## Scripts
 
-| Command             | What it does                       |
-| ------------------- | ---------------------------------- |
-| `npm run dev`       | Start the dev server               |
-| `npm run build`     | Typecheck and build for production |
-| `npm run preview`   | Preview the production build       |
-| `npm test`          | Run unit and component tests       |
-| `npm run typecheck` | TypeScript check                   |
-| `npm run lint`      | Lint with oxlint                   |
-| `npm run format`    | Format with Prettier               |
+| Command                 | What it does                                                                                             |
+| ----------------------- | -------------------------------------------------------------------------------------------------------- |
+| `npm run dev`           | Start the dev server                                                                                     |
+| `npm run catalog:build` | Rebuild the exercise catalog and copy illustrations (runs automatically before dev, build and typecheck) |
+| `npm run build`         | Typecheck and build for production                                                                       |
+| `npm run preview`       | Preview the production build                                                                             |
+| `npm test`              | Run unit and component tests                                                                             |
+| `npm run typecheck`     | TypeScript check                                                                                         |
+| `npm run lint`          | Lint with oxlint                                                                                         |
+| `npm run format`        | Format with Prettier                                                                                     |
 
 ## Project structure
 
@@ -91,14 +92,15 @@ docs/superpowers/
 - `scripts/verify-rls.mjs` checks that anonymous clients cannot read or write.
 - `.env` is gitignored. Do not commit secrets.
 
-## Exercise data and licensing
+## Exercise catalog
 
-The exercise catalog (planned) will combine open datasets, each with its own license:
+The catalog is built by `npm run catalog:build` from two open datasets and is not stored in the database:
 
-- [Workout Guide](https://github.com/bryllim/workout-guide): code MIT, illustrations CC BY-SA 4.0.
-- [free-exercise-db](https://github.com/yuhonas/free-exercise-db): text and metadata only, Unlicense. Its images have unknown licensing and will not be used.
+- [Workout Guide](https://github.com/bryllim/workout-guide) (npm `@bryllim/workout-guide`): 302 exercises with three illustrated frames each. Code MIT, illustrations CC BY-SA 4.0 (some derived from Everkinetic, also CC BY-SA 4.0). Frames are copied unchanged.
+- [free-exercise-db](https://github.com/yuhonas/free-exercise-db): instructions, level and category, plus about 800 text-only exercises. Pinned snapshot in `data/sources/`. Unlicense per the maintainer; its images have unknown licensing and are **not used**.
+- A few exercises written by this project (marked project-authored and unreviewed).
 
-Attribution will be shown in the app's Credits screen. Illustrations are CC BY-SA 4.0: derived or modified artwork must keep attribution and the same license.
+Every field keeps its source, license and author. Exercises with unknown equipment are never treated as available, and nothing is called beginner unless a source says so. The in-app Credits screen lists every source and illustration credit. Generated files (`src/data/exercise-catalog/`, `public/exercises/`) are gitignored.
 
 ## Contributing
 

@@ -156,6 +156,8 @@ Post-v1 roadmap (shown in the app or README so the project visibly moves): progr
 
 - Foundation deviations (milestone 1): `vite-plugin-pwa` and Recharts are installed in milestones 6 and 5 when first used. Linter is oxlint (the Vite template default) because `typescript-eslint` does not support TypeScript 7. Env var is `VITE_SUPABASE_PUBLISHABLE_KEY`. The magic link redirects to the page the user originally opened, which needs a wildcard redirect URL in Supabase.
 
+- Catalog milestone: Library, exercise detail and Credits are public routes (owner choice). Generated catalog data and illustrations are gitignored and rebuilt on dev/build. The Unreviewed badge appears only on project-authored exercises. Credits keep one entry per illustrated exercise.
+
 ## 12. Left to the builder
 
 Auth method details, the exact DB schema, the import script's fuzzy-match approach, final starter exercise selection, component library details, chart styling, the icon set and app name, and test coverage specifics.
