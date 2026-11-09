@@ -1,10 +1,11 @@
 import { render, screen } from '@testing-library/react'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import type { Session } from '@supabase/supabase-js'
 import { createMemoryRouter, RouterProvider } from 'react-router'
 import { AuthContext } from '@/features/auth/useSession'
 import { routes } from './index'
 
-// The Library page loads data; routing is all this test cares about.
+// Pages load data; routing and access rules are all this test cares about.
 vi.mock('@/features/exercises/useCatalog', () => ({
   useCatalog: () => ({
     data: undefined,
@@ -12,6 +13,7 @@ vi.mock('@/features/exercises/useCatalog', () => ({
     isError: false,
     refetch: () => {},
   }),
+  useExercise: () => 'loading',
 }))
 vi.mock('@/features/settings/useSettings', () => ({
   useSettings: () => ({
@@ -20,20 +22,21 @@ vi.mock('@/features/settings/useSettings', () => ({
     error: null,
   }),
 }))
+vi.mock('@/lib/catalog/loadCredits', () => ({
+  loadCredits: () => new Promise(() => {}),
+}))
 
-const renderAt = (path: string) =>
+const signedIn = {} as Session
+
+const renderAt = (path: string, session: Session | null = signedIn) =>
   render(
-    <AuthContext
-      value={{
-        session: {} as Session,
-        loading: false,
-        signOut: async () => {},
-      }}
-    >
-      <RouterProvider
-        router={createMemoryRouter(routes, { initialEntries: [path] })}
-      />
-    </AuthContext>,
+    <QueryClientProvider client={new QueryClient()}>
+      <AuthContext value={{ session, loading: false, signOut: async () => {} }}>
+        <RouterProvider
+          router={createMemoryRouter(routes, { initialEntries: [path] })}
+        />
+      </AuthContext>
+    </QueryClientProvider>,
   )
 
 it('renders the Library page at /library', () => {
@@ -46,4 +49,37 @@ it('renders NotFound for unknown routes', () => {
   expect(
     screen.getByRole('heading', { name: 'Page not found' }),
   ).toBeInTheDocument()
+})
+
+describe('signed out', () => {
+  it('can browse the Library without signing in', () => {
+    renderAt('/library', null)
+    expect(screen.getByRole('heading', { name: 'Library' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Sign in' })).toHaveAttribute(
+      'href',
+      '/login',
+    )
+  })
+
+  it('can open an exercise detail page without signing in', () => {
+    renderAt('/library/wg-plank', null)
+    expect(screen.getByRole('status')).toHaveTextContent('Loading exercise…')
+  })
+
+  it('can open Credits without signing in', () => {
+    renderAt('/credits', null)
+    expect(screen.getByRole('heading', { name: 'Credits' })).toBeInTheDocument()
+  })
+
+  it('is sent to the login page for personal pages', () => {
+    renderAt('/routines', null)
+    expect(
+      screen.getByRole('button', { name: 'Send magic link' }),
+    ).toBeInTheDocument()
+  })
+})
+
+it('does not show the Sign in link when signed in', () => {
+  renderAt('/library')
+  expect(screen.queryByRole('link', { name: 'Sign in' })).toBeNull()
 })

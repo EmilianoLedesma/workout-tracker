@@ -15,6 +15,16 @@ import WorkoutPage from '@/features/workouts/WorkoutPage'
 export const routes: RouteObject[] = [
   { path: 'login', element: <LoginPage /> },
   {
+    // Public: the exercise catalog is static data, no account needed.
+    element: <AppShell />,
+    children: [
+      { path: 'library', element: <LibraryPage /> },
+      { path: 'library/:exerciseId', element: <ExerciseDetailPage /> },
+      { path: 'credits', element: <CreditsPage /> },
+    ],
+  },
+  {
+    // Personal pages: sign-in required.
     element: (
       <RequireAuth>
         <AppShell />
@@ -22,13 +32,10 @@ export const routes: RouteObject[] = [
     ),
     children: [
       { index: true, element: <DashboardPage /> },
-      { path: 'library', element: <LibraryPage /> },
-      { path: 'library/:exerciseId', element: <ExerciseDetailPage /> },
       { path: 'routines', element: <RoutinesPage /> },
       { path: 'workout/:routineId', element: <WorkoutPage /> },
       { path: 'progress', element: <ProgressPage /> },
       { path: 'settings', element: <SettingsPage /> },
-      { path: 'credits', element: <CreditsPage /> },
       { path: '*', element: <NotFoundPage /> },
     ],
   },
