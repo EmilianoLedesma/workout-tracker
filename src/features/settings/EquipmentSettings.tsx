@@ -1,10 +1,6 @@
+import { label } from '@/lib/catalog/label'
 import { EQUIPMENT, type Equipment } from '@/lib/catalog/vocab'
 import { useSettings, useUpdateSettings } from './useSettings'
-
-const label = (value: string) => {
-  const text = value.replace(/-/g, ' ')
-  return text.charAt(0).toUpperCase() + text.slice(1)
-}
 
 export function EquipmentSettings() {
   const { settings, isLoading } = useSettings()
