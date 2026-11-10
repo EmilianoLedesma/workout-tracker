@@ -28,7 +28,11 @@ const ex = (id: string, name: string, exerciseType = 'reps') =>
 const state = vi.hoisted(() => ({
   routine: undefined as Routine | null | undefined,
   saveAsync: vi.fn(),
-  catalog: {} as { data?: { exercises: unknown[] }; isPending: boolean; isError: boolean },
+  catalog: {} as {
+    data?: { exercises: unknown[] }
+    isPending: boolean
+    isError: boolean
+  },
 }))
 
 vi.mock('./useRoutines', () => ({
@@ -130,7 +134,9 @@ describe('editing', () => {
     renderAt('/routines/r1')
     await userEvent.click(screen.getByRole('button', { name: 'Move Squat up' }))
     // Squat is first now, so its up button is disabled; focus goes to its down button.
-    expect(screen.getByRole('button', { name: 'Move Squat down' })).toHaveFocus()
+    expect(
+      screen.getByRole('button', { name: 'Move Squat down' }),
+    ).toHaveFocus()
   })
 
   it('removes an exercise', async () => {

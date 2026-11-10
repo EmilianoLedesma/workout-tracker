@@ -271,6 +271,17 @@ describe('useDuplicateRoutine', () => {
     expect(name).toHaveLength(60)
     expect(name.endsWith(' (copy)')).toBe(true)
   })
+
+  it('never cuts an emoji in half', async () => {
+    const { result } = renderHook(() => useDuplicateRoutine(), { wrapper })
+    await act(async () => {
+      await result.current.mutateAsync(source('x'.repeat(52) + '💪💪'))
+    })
+    const name = mocks.rpc.mock.calls[0][1].p_name as string
+    const loneSurrogate = new RegExp('[\\uD800-\\uDBFF](?![\\uDC00-\\uDFFF])')
+    expect(name).not.toMatch(loneSurrogate)
+    expect(name.endsWith(' (copy)')).toBe(true)
+  })
 })
 
 describe('useSeedStarters', () => {

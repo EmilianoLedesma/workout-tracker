@@ -49,7 +49,16 @@ export default function RoutinesPage() {
       </div>
     )
   } else if (routines.length === 0) {
-    body = <p>No routines yet</p>
+    body = seed.isError ? (
+      <div role="alert" className="flex flex-col items-start gap-2">
+        <p>Could not add the starter routines.</p>
+        <Button className="h-11" onClick={() => seed.mutate()}>
+          Try again
+        </Button>
+      </div>
+    ) : (
+      <p>No routines yet</p>
+    )
   } else {
     body = (
       <ul className="grid gap-3 md:grid-cols-2">

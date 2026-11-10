@@ -143,7 +143,11 @@ export function useDuplicateRoutine() {
   return useMutation({
     mutationFn: (routine: Routine) =>
       saveRoutine(null, {
-        name: routine.name.slice(0, 60 - COPY.length) + COPY,
+        // Array.from counts whole characters, so an emoji is never cut in half.
+        name:
+          Array.from(routine.name)
+            .slice(0, 60 - COPY.length)
+            .join('') + COPY,
         dayLabel: null,
         items: routine.items,
       }),

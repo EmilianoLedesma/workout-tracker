@@ -10,6 +10,7 @@ const state = vi.hoisted(() => ({
   error: null as Error | null,
   refetch: vi.fn(),
   seed: vi.fn(),
+  seedError: null as Error | null,
   remove: vi.fn(),
   duplicate: vi.fn(),
   removeError: null as Error | null,
@@ -25,7 +26,7 @@ vi.mock('./useRoutines', () => ({
     error: state.error,
     refetch: state.refetch,
   }),
-  useSeedStarters: () => ({ mutate: state.seed }),
+  useSeedStarters: () => ({ mutate: state.seed, isError: !!state.seedError }),
   useDeleteRoutine: () => ({
     mutate: state.remove,
     error: state.removeError,
@@ -80,6 +81,7 @@ beforeEach(() => {
   })
   state.refetch.mockReset()
   state.seed.mockReset()
+  state.seedError = null
   state.remove.mockReset()
   state.duplicate.mockReset()
 })
@@ -171,6 +173,18 @@ it('seeds the starters once when a first visit finds no routines', () => {
       <RoutinesPage />
     </MemoryRouter>,
   )
+  expect(state.seed).toHaveBeenCalledTimes(1)
+})
+
+it('offers a retry when seeding the starters failed', async () => {
+  state.routines = []
+  state.seedError = new Error('x')
+  renderPage()
+  expect(screen.getByRole('alert')).toHaveTextContent(
+    'Could not add the starter routines.',
+  )
+  state.seed.mockClear()
+  await userEvent.click(screen.getByRole('button', { name: 'Try again' }))
   expect(state.seed).toHaveBeenCalledTimes(1)
 })
 
