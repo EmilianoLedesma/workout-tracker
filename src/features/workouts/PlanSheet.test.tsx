@@ -77,6 +77,41 @@ const setup = (workout = fresh()) => {
   return { act, onFinishEarly, onClose }
 }
 
+describe('as a dialog', () => {
+  it('is a modal dialog that takes focus when it opens', () => {
+    setup()
+    const dialog = screen.getByRole('dialog', { name: "Today's plan" })
+    expect(dialog).toHaveAttribute('aria-modal', 'true')
+    expect(screen.getByRole('heading', { name: "Today's plan" })).toHaveFocus()
+  })
+
+  it('closes with Escape', async () => {
+    const { onClose } = setup()
+    await userEvent.keyboard('{Escape}')
+    expect(onClose).toHaveBeenCalled()
+  })
+
+  it('gives focus back to what had it before', () => {
+    const opener = document.createElement('button')
+    document.body.append(opener)
+    opener.focus()
+    const view = render(
+      <PlanSheet
+        workout={fresh()}
+        exercises={catalog}
+        equipment={['bodyweight']}
+        act={vi.fn()}
+        onFinishEarly={vi.fn()}
+        onClose={vi.fn()}
+      />,
+    )
+    expect(screen.getByRole('heading', { name: "Today's plan" })).toHaveFocus()
+    view.unmount()
+    expect(opener).toHaveFocus()
+    opener.remove()
+  })
+})
+
 it('says the changes are for today only', () => {
   setup()
   expect(screen.getByText(/apply to today only/i)).toBeInTheDocument()

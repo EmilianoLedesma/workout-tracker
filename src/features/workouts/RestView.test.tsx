@@ -82,6 +82,18 @@ describe('while resting', () => {
   })
 })
 
+describe('for screen readers and keyboards', () => {
+  it('moves focus to the rest label when the screen appears', () => {
+    setup(19000)
+    expect(screen.getByText('Rest')).toHaveFocus()
+  })
+
+  it('announces when the rest is over', () => {
+    setup(61000)
+    expect(screen.getByRole('status')).toHaveTextContent('Rest over')
+  })
+})
+
 describe('when the rest is over', () => {
   it('says so, flashes unless motion is reduced, and starts the next set', async () => {
     const act = setup(61000)

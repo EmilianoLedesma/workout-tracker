@@ -120,62 +120,67 @@ export default function WorkoutPage() {
       )
     }
     return (
-      <div className="flex flex-col gap-4" onPointerDown={() => prepareAudio()}>
-        <header className="flex items-center justify-between gap-2">
-          <h1 className="font-display text-accent-text text-xl font-black tracking-wider uppercase">
-            {workout.routineName}
-          </h1>
-          <Button
-            type="button"
-            variant="outline"
-            className="min-h-11 border-2 border-foreground px-4 font-bold"
-            onClick={() => setPlanOpen(true)}
-          >
-            Plan
-          </Button>
-        </header>
-
-        {workout.phase === 'set' && (
-          <SetView
-            workout={workout}
-            now={now}
-            exercises={exercises}
-            act={act}
-          />
-        )}
-        {workout.phase === 'rest' && (
-          <RestView
-            workout={workout}
-            now={now}
-            exercises={exercises}
-            act={act}
-          />
-        )}
-        {workout.phase === 'review' && (
-          <div className="flex flex-col gap-4">
-            <h2 className="font-display text-4xl leading-none font-black uppercase">
-              All sets done
-            </h2>
+      <>
+        <div
+          className="flex flex-col gap-4"
+          inert={planOpen}
+          onPointerDown={() => prepareAudio()}
+        >
+          <header className="flex items-center justify-between gap-2">
+            <h1 className="font-display text-accent-text text-xl font-black tracking-wider uppercase">
+              {workout.routineName}
+            </h1>
             <Button
               type="button"
-              className={cta}
-              onClick={() => setFinishing(true)}
+              variant="outline"
+              className="min-h-11 border-2 border-foreground px-4 font-bold"
+              onClick={() => setPlanOpen(true)}
             >
-              Finish
+              Plan
             </Button>
-          </div>
-        )}
-        {workout.phase !== 'review' && (
-          <Button
-            type="button"
-            variant="outline"
-            className={outline}
-            onClick={() => act({ type: 'pause' })}
-          >
-            Pause
-          </Button>
-        )}
+          </header>
 
+          {workout.phase === 'set' && (
+            <SetView
+              workout={workout}
+              now={now}
+              exercises={exercises}
+              act={act}
+            />
+          )}
+          {workout.phase === 'rest' && (
+            <RestView
+              workout={workout}
+              now={now}
+              exercises={exercises}
+              act={act}
+            />
+          )}
+          {workout.phase === 'review' && (
+            <div className="flex flex-col gap-4">
+              <h2 className="font-display text-4xl leading-none font-black uppercase">
+                All sets done
+              </h2>
+              <Button
+                type="button"
+                className={cta}
+                onClick={() => setFinishing(true)}
+              >
+                Finish
+              </Button>
+            </div>
+          )}
+          {workout.phase !== 'review' && (
+            <Button
+              type="button"
+              variant="outline"
+              className={outline}
+              onClick={() => act({ type: 'pause' })}
+            >
+              Pause
+            </Button>
+          )}
+        </div>
         {planOpen && (
           <PlanSheet
             workout={workout}
@@ -189,7 +194,7 @@ export default function WorkoutPage() {
             onClose={() => setPlanOpen(false)}
           />
         )}
-      </div>
+      </>
     )
   }
 

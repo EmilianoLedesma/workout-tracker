@@ -220,13 +220,23 @@ describe('during the workout', () => {
     renderPage()
     await userEvent.click(screen.getByRole('button', { name: 'Plan' }))
     expect(
-      screen.getByRole('region', { name: "Today's plan" }),
+      screen.getByRole('dialog', { name: "Today's plan" }),
     ).toBeInTheDocument()
     await userEvent.click(screen.getByRole('button', { name: 'Finish early' }))
     expect(
       screen.getByRole('button', { name: 'Save workout' }),
     ).toBeInTheDocument()
-    expect(screen.queryByRole('region', { name: "Today's plan" })).toBeNull()
+    expect(screen.queryByRole('dialog', { name: "Today's plan" })).toBeNull()
+  })
+
+  it('makes the page behind the plan inert while it is open', async () => {
+    state.session = makeSession({ workout: fresh() })
+    const { container } = renderPage()
+    expect(container.querySelector('[inert]')).toBeNull()
+    await userEvent.click(screen.getByRole('button', { name: 'Plan' }))
+    expect(container.querySelector('[inert]')).not.toBeNull()
+    await userEvent.click(screen.getByRole('button', { name: 'Close' }))
+    expect(container.querySelector('[inert]')).toBeNull()
   })
 
   it('offers Finish when every set is done and sends the note', async () => {

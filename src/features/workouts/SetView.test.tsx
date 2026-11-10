@@ -87,6 +87,11 @@ describe('reps exercise', () => {
     expect(act).toHaveBeenLastCalledWith({ type: 'adjustTarget', delta: -1 })
   })
 
+  it('moves focus to the exercise name when the screen appears', () => {
+    setup(w())
+    expect(screen.getByRole('heading', { name: 'Wall push-up' })).toHaveFocus()
+  })
+
   it('lists the sets of the exercise', () => {
     setup(w())
     expect(screen.getAllByRole('listitem')).toHaveLength(2)

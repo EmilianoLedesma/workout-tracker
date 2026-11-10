@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { ExercisePicker } from '@/features/routines/ExercisePicker'
 import { defaultItem } from '@/features/routines/routineDraft'
@@ -29,6 +29,13 @@ export function PlanSheet({
   onClose,
 }: Props) {
   const [adding, setAdding] = useState(false)
+  // Take focus when the sheet opens and give it back when it closes.
+  const headingRef = useRef<HTMLHeadingElement>(null)
+  useEffect(() => {
+    const before = document.activeElement as HTMLElement | null
+    headingRef.current?.focus()
+    return () => before?.focus?.()
+  }, [])
   const names = new Map(exercises.map((e) => [e.id, e.name]))
   const nameOf = (id: string) => names.get(id) ?? 'Exercise no longer available'
   const target = planTarget(workout)
@@ -36,11 +43,20 @@ export function PlanSheet({
 
   return (
     <section
+      role="dialog"
+      aria-modal="true"
       aria-label="Today's plan"
+      onKeyDown={(e) => {
+        if (e.key === 'Escape') onClose()
+      }}
       className="bg-background fixed inset-0 z-20 flex flex-col gap-3 overflow-auto p-4"
     >
       <div className="flex items-center justify-between">
-        <h2 className="font-display text-accent-text text-xl font-black tracking-wider uppercase">
+        <h2
+          ref={headingRef}
+          tabIndex={-1}
+          className="font-display text-accent-text text-xl font-black tracking-wider uppercase outline-none"
+        >
           Today&apos;s plan
         </h2>
         <Button

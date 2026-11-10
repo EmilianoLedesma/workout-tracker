@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react'
 import { Button } from '@/components/ui/button'
 import type { Exercise } from '@/types/exercise'
 import type { Workout } from '@/types/workout'
@@ -15,6 +16,9 @@ type Props = {
 const step = 'min-h-11 flex-1 border-2 border-foreground px-3 font-bold'
 
 export function RestView({ workout, now, exercises, act }: Props) {
+  // Focus lands on the label when this screen replaces the set screen.
+  const labelRef = useRef<HTMLParagraphElement>(null)
+  useEffect(() => labelRef.current?.focus(), [])
   const next = currentSet(workout)
   const left = workout.timer ? remainingMs(workout.timer, now) : 0
   const over = left === 0
@@ -26,10 +30,17 @@ export function RestView({ workout, now, exercises, act }: Props) {
 
   return (
     <div className="flex flex-col gap-4">
-      <p className="text-muted-foreground text-sm">Rest</p>
+      <p
+        ref={labelRef}
+        tabIndex={-1}
+        className="text-muted-foreground text-sm outline-none"
+      >
+        Rest
+      </p>
 
       {over ? (
         <div
+          role="status"
           data-flash
           className="bg-accent-fill border-foreground animate-pulse border-2 py-6 text-center motion-reduce:animate-none"
         >

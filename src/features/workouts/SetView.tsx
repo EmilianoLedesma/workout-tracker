@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react'
 import { ExerciseImage } from '@/components/exercises/ExerciseImage'
 import { Button } from '@/components/ui/button'
 import type { Exercise } from '@/types/exercise'
@@ -19,6 +20,10 @@ export const cta =
 const step = 'min-h-11 flex-1 border-2 border-foreground px-3 font-bold'
 
 export function SetView({ workout, now, exercises, act }: Props) {
+  // The previous screen's focused button goes away when the phase changes, so
+  // land on the exercise name instead of dropping to the page.
+  const headingRef = useRef<HTMLHeadingElement>(null)
+  useEffect(() => headingRef.current?.focus(), [])
   const cur = currentSet(workout)
   if (!cur) return null
   const { exercise, set, setNumber, setCount } = cur
@@ -45,7 +50,11 @@ export function SetView({ workout, now, exercises, act }: Props) {
           Set {setNumber} of {setCount}
         </span>
       </p>
-      <h2 className="font-display text-4xl leading-none font-black uppercase">
+      <h2
+        ref={headingRef}
+        tabIndex={-1}
+        className="font-display text-4xl leading-none font-black uppercase outline-none"
+      >
         {name}
       </h2>
 
