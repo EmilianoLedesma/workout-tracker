@@ -43,6 +43,8 @@ export const workoutSchema = z.object({
   phase: phaseSchema,
   timer: timerSchema.nullable(),
   lastDone: position.nullable(),
+  /** When the last set was logged; guards against a double tap on Done. */
+  lastCompletedAt: z.number().nullable().default(null),
   paused: z.boolean(),
   pausedAt: z.number().nullable(),
   pausedMs: z.number().min(0),

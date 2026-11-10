@@ -10,6 +10,7 @@ import {
 
 const MAX_SETS = 10
 const MAX_EXERCISES = 50
+const DOUBLE_TAP_MS = 400
 const clamp = (n: number, min: number, max: number) =>
   Math.min(max, Math.max(min, n))
 
@@ -71,6 +72,7 @@ export function createWorkout(args: {
     phase: exercises.length ? 'set' : 'review',
     timer: null,
     lastDone: null,
+    lastCompletedAt: null,
     paused: false,
     pausedAt: null,
     pausedMs: 0,
@@ -167,6 +169,13 @@ export function reduce(w: Workout, a: Action): Workout {
     case 'completeSet': {
       if (w.phase !== 'set' || !curSet || cur.status !== 'active') return w
       if (curSet.actual !== null) return w
+      // A second tap right after the first must not log the next set too.
+      if (
+        w.lastCompletedAt !== null &&
+        now - w.lastCompletedAt < DOUBLE_TAP_MS
+      ) {
+        return w
+      }
       if (
         cur.targetType === 'seconds' &&
         !(w.timer && isFinished(w.timer, now))
@@ -181,6 +190,7 @@ export function reduce(w: Workout, a: Action): Workout {
         ...w,
         exercises,
         lastDone: w.cursor,
+        lastCompletedAt: now,
         timer: null,
         updatedAt: now,
       }

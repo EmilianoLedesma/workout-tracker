@@ -120,6 +120,15 @@ describe('completing sets', () => {
     expect(reduce(once, { type: 'completeSet', now: 1001 })).toBe(once)
   })
 
+  it('ignores a double tap on Done even when there is no rest between sets', () => {
+    const w = start(item('a', { restSeconds: 0, sets: 3 }))
+    const once = reduce(w, { type: 'completeSet', now: 1000 })
+    expect(once.cursor).toEqual({ exercise: 0, set: 1 })
+    expect(reduce(once, { type: 'completeSet', now: 1100 })).toBe(once)
+    const later = reduce(once, { type: 'completeSet', now: 1500 })
+    expect(later.exercises[0].sets[1].actual).toBe(8)
+  })
+
   it('completes a timed set only after its countdown ends', () => {
     const w = start(item('p', { targetType: 'seconds', target: 30, sets: 1 }))
     expect(reduce(w, { type: 'completeSet', now: 1000 })).toBe(w)

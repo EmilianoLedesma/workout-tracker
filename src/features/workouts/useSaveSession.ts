@@ -13,21 +13,28 @@ export function useSaveSession() {
   return useMutation({
     mutationFn: async (p: SessionPayload): Promise<void> => {
       if (!userId) throw new Error('Not signed in')
-      const { error } = await getSupabase().from('sessions').upsert(
-        {
-          id: p.id,
-          user_id: userId,
-          routine_id: p.routineId,
-          routine_name: p.routineName,
-          started_at: p.startedAt,
-          finished_at: p.finishedAt,
-          duration_seconds: p.durationSeconds,
-          status: p.status,
-          note: p.note,
-          log: p.log,
-        },
-        { onConflict: 'id', ignoreDuplicates: true },
-      )
+      const insert = (routineId: string | null) =>
+        getSupabase().from('sessions').upsert(
+          {
+            id: p.id,
+            user_id: userId,
+            routine_id: routineId,
+            routine_name: p.routineName,
+            started_at: p.startedAt,
+            finished_at: p.finishedAt,
+            duration_seconds: p.durationSeconds,
+            status: p.status,
+            note: p.note,
+            log: p.log,
+          },
+          { onConflict: 'id', ignoreDuplicates: true },
+        )
+      let { error } = await insert(p.routineId)
+      // The routine was deleted while the workout ran: the link is gone but the
+      // workout is still real, so save it unlinked instead of failing forever.
+      if (error?.code === '23503' && p.routineId) {
+        ;({ error } = await insert(null))
+      }
       if (error) throw new Error(error.message)
     },
   })

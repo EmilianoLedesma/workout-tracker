@@ -227,9 +227,10 @@ describe('during the workout', () => {
 
   it('offers Finish when every set is done and sends the note', async () => {
     let w = fresh()
-    w = reduce(w, { type: 'completeSet', now: Date.now() })
-    w = reduce(w, { type: 'endRest', now: Date.now() })
-    w = reduce(w, { type: 'completeSet', now: Date.now() })
+    const t = Date.now()
+    w = reduce(w, { type: 'completeSet', now: t })
+    w = reduce(w, { type: 'endRest', now: t + 1000 })
+    w = reduce(w, { type: 'completeSet', now: t + 2000 })
     expect(w.phase).toBe('review')
     state.session = makeSession({ workout: w })
     renderPage()

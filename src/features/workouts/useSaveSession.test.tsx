@@ -95,6 +95,35 @@ it('sends the same id on every attempt so a retry cannot add a second row', asyn
   expect(ids).toEqual(['w1', 'w1'])
 })
 
+it('saves without the routine link when the routine was deleted meanwhile', async () => {
+  mocks.upsert
+    .mockResolvedValueOnce({ error: { code: '23503', message: 'fk' } })
+    .mockResolvedValueOnce({ error: null })
+  const { result } = renderHook(() => useSaveSession(), {
+    wrapper: wrapperFor(signedIn),
+  })
+  await act(async () => {
+    await result.current.mutateAsync(payload)
+  })
+  expect(mocks.upsert).toHaveBeenCalledTimes(2)
+  expect(mocks.upsert.mock.calls[0][0].routine_id).toBe('r1')
+  expect(mocks.upsert.mock.calls[1][0].routine_id).toBeNull()
+  expect(mocks.upsert.mock.calls[1][0].id).toBe('w1')
+})
+
+it('does not retry other errors', async () => {
+  mocks.upsert.mockResolvedValue({ error: { code: '23514', message: 'check' } })
+  const { result } = renderHook(() => useSaveSession(), {
+    wrapper: wrapperFor(signedIn),
+  })
+  await expect(
+    act(async () => {
+      await result.current.mutateAsync(payload)
+    }),
+  ).rejects.toThrow('check')
+  expect(mocks.upsert).toHaveBeenCalledTimes(1)
+})
+
 it('rejects when the server returns an error', async () => {
   mocks.upsert.mockResolvedValue({ error: { message: 'boom' } })
   const { result } = renderHook(() => useSaveSession(), {
