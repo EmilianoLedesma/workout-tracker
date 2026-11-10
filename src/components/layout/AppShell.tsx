@@ -19,14 +19,6 @@ export function AppShell({ children }: { children?: ReactNode }) {
           )}
         </header>
         <div className="p-4">{children ?? <Outlet />}</div>
-        <footer className="px-4 pb-4">
-          <Link
-            to="/credits"
-            className="flex min-h-11 items-center text-sm text-muted-foreground underline underline-offset-4"
-          >
-            Credits
-          </Link>
-        </footer>
       </main>
       <BottomNav />
     </div>

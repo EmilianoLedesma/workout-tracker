@@ -118,12 +118,17 @@ describe('credits link', () => {
   it.each([
     ['signed out', null],
     ['signed in', signedIn],
-  ])('is in the shared footer when %s', (_label, session) => {
+  ])('is on the Library page when %s', (_label, session) => {
     renderAt('/library', session)
     expect(screen.getByRole('link', { name: 'Credits' })).toHaveAttribute(
       'href',
       '/credits',
     )
+  })
+
+  it('is not in the shared footer of other pages', () => {
+    renderAt('/routines')
+    expect(screen.queryByRole('link', { name: 'Credits' })).toBeNull()
   })
 })
 

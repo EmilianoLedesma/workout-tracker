@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router'
 import type { Exercise } from '@/types/exercise'
@@ -97,9 +97,9 @@ it('renders 40 results and the rest after "Show more"', async () => {
     ),
   )
   renderPage()
-  expect(screen.getAllByRole('link')).toHaveLength(40)
+  expect(within(screen.getByRole('list')).getAllByRole('link')).toHaveLength(40)
   await userEvent.click(screen.getByRole('button', { name: 'Show more' }))
-  expect(screen.getAllByRole('link')).toHaveLength(45)
+  expect(within(screen.getByRole('list')).getAllByRole('link')).toHaveLength(45)
   expect(
     screen.queryByRole('button', { name: 'Show more' }),
   ).not.toBeInTheDocument()

@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { Link } from 'react-router'
 import { Button } from '@/components/ui/button'
 import { useSettings } from '@/features/settings/useSettings'
 import { filterExercises, type Filters } from '@/lib/catalog/search'
@@ -88,6 +89,12 @@ export default function LibraryPage() {
     <div className="flex flex-col gap-4">
       <h1 className="page-title">Library</h1>
       {body}
+      <Link
+        to="/credits"
+        className="flex min-h-11 items-center text-sm text-muted-foreground underline underline-offset-4"
+      >
+        Credits
+      </Link>
     </div>
   )
 }
