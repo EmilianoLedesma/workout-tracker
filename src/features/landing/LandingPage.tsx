@@ -4,7 +4,7 @@ import { CalendarCheck, ClipboardCheck, ListChecks } from 'lucide-react'
 const STEPS = [
   {
     title: 'Pick a routine',
-    text: 'Start from a short beginner plan or build your own from the library.',
+    text: 'Start from a short starter routine or build your own from the library.',
     Icon: ListChecks,
   },
   {

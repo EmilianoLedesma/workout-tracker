@@ -47,3 +47,23 @@ for (const table of TABLES) {
   }
   console.log(`PASS: ${table}: anonymous read empty, anonymous insert rejected`)
 }
+
+// The write functions must not be callable without signing in. Revoked execute
+// shows up as 401/403 (or 404 when the API hides it); success or a server error
+// would mean anonymous clients can reach them.
+const FUNCTIONS = {
+  save_routine: { p_id: null, p_name: 'x', p_day_label: null, p_items: [] },
+  seed_starter_routines: { p_routines: [] },
+}
+for (const [name, args] of Object.entries(FUNCTIONS)) {
+  const res = await fetch(`${url}/rest/v1/rpc/${name}`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify(args),
+  })
+  if (![401, 403, 404].includes(res.status)) {
+    console.error(`FAIL: anonymous call to ${name} returned HTTP ${res.status}`)
+    process.exit(1)
+  }
+  console.log(`PASS: ${name}: anonymous call rejected (HTTP ${res.status})`)
+}

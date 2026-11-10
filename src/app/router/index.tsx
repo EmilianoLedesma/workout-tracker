@@ -38,6 +38,7 @@ export const routes: RouteObject[] = [
       { path: 'library', element: <LibraryPage /> },
       { path: 'library/:exerciseId', element: <ExerciseDetailPage /> },
       { path: 'credits', element: <CreditsPage /> },
+      { path: '*', element: <NotFoundPage /> },
     ],
   },
   {
@@ -54,7 +55,6 @@ export const routes: RouteObject[] = [
       { path: 'workout/:routineId', element: <WorkoutPage /> },
       { path: 'progress', element: <ProgressPage /> },
       { path: 'settings', element: <SettingsPage /> },
-      { path: '*', element: <NotFoundPage /> },
     ],
   },
 ]

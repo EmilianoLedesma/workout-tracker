@@ -84,6 +84,13 @@ describe('signed out', () => {
     expect(screen.getByRole('heading', { name: 'Credits' })).toBeInTheDocument()
   })
 
+  it('sees the 404 page for an unknown address, not the login page', () => {
+    renderAt('/nope', null)
+    expect(
+      screen.getByRole('heading', { name: 'Page not found' }),
+    ).toBeInTheDocument()
+  })
+
   it('is sent to the login page for personal pages', () => {
     renderAt('/routines', null)
     expect(
