@@ -65,7 +65,10 @@ function Editor({
   const { settings } = useSettings()
   const save = useSaveRoutine()
   const [draft, setDraft] = useState(initial)
-  const [errors, setErrors] = useState<DraftErrors>({ items: {} })
+  const [errors, setErrors] = useState<DraftErrors>({
+    items: {},
+    itemFields: {},
+  })
   const [saveError, setSaveError] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
 
@@ -78,7 +81,7 @@ function Editor({
     const firstBad = found.name
       ? 'routine-name'
       : firstItem !== undefined
-        ? `item-${firstItem}-sets`
+        ? `item-${firstItem}-${found.itemFields[Number(firstItem)]}`
         : null
     if (firstBad) {
       document.getElementById(firstBad)?.focus()
@@ -117,11 +120,14 @@ function Editor({
           value={draft.name}
           maxLength={60}
           aria-invalid={!!errors.name}
+          aria-describedby={errors.name ? 'routine-name-error' : undefined}
           onChange={(e) => setDraft({ ...draft, name: e.target.value })}
           className={field}
         />
         {errors.name && (
-          <p className="text-destructive text-sm">{errors.name}</p>
+          <p id="routine-name-error" className="text-destructive text-sm">
+            {errors.name}
+          </p>
         )}
       </div>
 
@@ -183,6 +189,8 @@ function Editor({
                   <div className="grid grid-cols-3 gap-2">
                     <NumberField
                       id={`item-${i}-sets`}
+                      invalid={errors.itemFields[i] === 'sets'}
+                      errorId={`item-${i}-error`}
                       text="Sets"
                       label={`Sets for ${who}`}
                       value={item.sets}
@@ -192,6 +200,8 @@ function Editor({
                     />
                     <NumberField
                       id={`item-${i}-target`}
+                      invalid={errors.itemFields[i] === 'target'}
+                      errorId={`item-${i}-error`}
                       text={unit}
                       label={`${unit} for ${who}`}
                       value={item.target}
@@ -201,6 +211,8 @@ function Editor({
                     />
                     <NumberField
                       id={`item-${i}-rest`}
+                      invalid={errors.itemFields[i] === 'rest'}
+                      errorId={`item-${i}-error`}
                       text="Rest (s)"
                       label={`Rest for ${who}`}
                       value={item.restSeconds}
@@ -210,7 +222,10 @@ function Editor({
                     />
                   </div>
                   {errors.items[i] && (
-                    <p className="text-destructive text-sm">
+                    <p
+                      id={`item-${i}-error`}
+                      className="text-destructive text-sm"
+                    >
                       {errors.items[i]}
                     </p>
                   )}
@@ -296,12 +311,16 @@ function Editor({
 
 function NumberField({
   id,
+  invalid,
+  errorId,
   text,
   label,
   value,
   onChange,
 }: {
   id: string
+  invalid: boolean
+  errorId: string
   text: string
   label: string
   value: number
@@ -315,6 +334,8 @@ function NumberField({
       <input
         id={id}
         aria-label={label}
+        aria-invalid={invalid}
+        aria-describedby={invalid ? errorId : undefined}
         inputMode="numeric"
         value={show(value)}
         onChange={(e) => onChange(toNumber(e.target.value))}

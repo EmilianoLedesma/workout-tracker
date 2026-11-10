@@ -132,6 +132,40 @@ describe('useRoutine', () => {
   })
 })
 
+describe('useRoutine on a failed background refetch', () => {
+  it('keeps returning the cached routine instead of an error', async () => {
+    mocks.select.mockResolvedValue({
+      data: [row('a', 'A', '2026-01-01')],
+      error: null,
+    })
+    const { result } = renderHook(
+      () => ({ list: useRoutines(), one: useRoutine('a') }),
+      { wrapper },
+    )
+    await waitFor(() => expect(result.current.one.routine?.id).toBe('a'))
+
+    mocks.select.mockResolvedValue({
+      data: null,
+      error: { message: 'offline' },
+    })
+    await act(async () => {
+      await result.current.list.refetch()
+    })
+    await waitFor(() =>
+      expect(result.current.list.error?.message).toBe('offline'),
+    )
+    expect(result.current.one.routine?.id).toBe('a')
+    expect(result.current.one.error).toBeNull()
+  })
+
+  it('reports the error when the first load fails', async () => {
+    mocks.select.mockResolvedValue({ data: null, error: { message: 'boom' } })
+    const { result } = renderHook(() => useRoutine('a'), { wrapper })
+    await waitFor(() => expect(result.current.error?.message).toBe('boom'))
+    expect(result.current.routine).toBeUndefined()
+  })
+})
+
 describe('useSaveRoutine', () => {
   const draft = {
     name: 'Mine',

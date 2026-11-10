@@ -189,6 +189,31 @@ describe('validation', () => {
   })
 })
 
+describe('validation accessibility', () => {
+  it('marks the wrong field, links its message and moves focus to it', async () => {
+    renderAt('/routines/r1')
+    const reps = screen.getByLabelText('Reps for Push-up')
+    await userEvent.clear(reps)
+    await userEvent.type(reps, '101')
+    await userEvent.click(screen.getByRole('button', { name: 'Save' }))
+    expect(reps).toHaveFocus()
+    expect(reps).toHaveAttribute('aria-invalid', 'true')
+    expect(reps).toHaveAccessibleDescription('Reps must be 1 to 100')
+    expect(screen.getByLabelText('Sets for Push-up')).not.toHaveAttribute(
+      'aria-invalid',
+      'true',
+    )
+  })
+
+  it('links the name message to the name field and focuses it', async () => {
+    renderAt('/routines/new')
+    await userEvent.click(screen.getByRole('button', { name: 'Save' }))
+    const name = screen.getByLabelText('Name')
+    expect(name).toHaveFocus()
+    expect(name).toHaveAccessibleDescription('Name is required')
+  })
+})
+
 describe('failures', () => {
   it('keeps the draft, shows the server error and retries', async () => {
     state.saveAsync.mockRejectedValueOnce(new Error('nope'))

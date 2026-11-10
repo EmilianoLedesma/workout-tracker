@@ -76,15 +76,24 @@ export function useRoutines() {
     isLoading: query.isLoading,
     error: query.error,
     refetch: query.refetch,
+    hasData: query.data !== undefined,
   }
 }
 
-/** `undefined` while loading or on error, `null` when the id does not exist. */
+/**
+ * Returns `undefined` while loading or when the first load failed, and `null`
+ * when the id does not exist. A failed background refetch keeps the cached routine, so an
+ * open editor never loses its draft.
+ */
 export function useRoutine(id: string) {
-  const { routines, isLoading, error } = useRoutines()
-  const routine =
-    isLoading || error ? undefined : (routines.find((r) => r.id === id) ?? null)
-  return { routine, isLoading, error }
+  const { routines, isLoading, error, hasData } = useRoutines()
+  if (isLoading) return { routine: undefined, isLoading, error: null }
+  if (!hasData) return { routine: undefined, isLoading, error }
+  return {
+    routine: routines.find((r) => r.id === id) ?? null,
+    isLoading,
+    error: null,
+  }
 }
 
 async function saveRoutine(id: string | null, draft: Draft): Promise<string> {

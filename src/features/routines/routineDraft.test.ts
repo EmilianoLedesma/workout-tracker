@@ -107,9 +107,9 @@ describe('editing', () => {
 
 describe('validateDraft', () => {
   it('returns no errors for a valid draft, including one with no exercises', () => {
-    expect(validateDraft(draft('a'))).toEqual({ items: {} })
+    expect(validateDraft(draft('a'))).toEqual({ items: {}, itemFields: {} })
     expect(validateDraft({ name: 'Empty', dayLabel: null, items: [] })).toEqual(
-      { items: {} },
+      { items: {}, itemFields: {} },
     )
   })
 
@@ -139,5 +139,13 @@ describe('validateDraft', () => {
   it('rejects negative rest and reports the item by index', () => {
     const d = updateItem(draft('a', 'b'), 1, { restSeconds: -1 })
     expect(validateDraft(d).items).toEqual({ 1: 'Rest must be 0 to 600' })
+  })
+
+  it('reports which field of an item is wrong', () => {
+    const field = (patch: Partial<RoutineExercise>) =>
+      validateDraft(updateItem(draft('a'), 0, patch)).itemFields
+    expect(field({ sets: 0 })).toEqual({ 0: 'sets' })
+    expect(field({ target: 101 })).toEqual({ 0: 'target' })
+    expect(field({ restSeconds: -1 })).toEqual({ 0: 'rest' })
   })
 })
