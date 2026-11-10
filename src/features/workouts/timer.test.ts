@@ -1,11 +1,22 @@
 import {
   addSeconds,
+  formatClock,
   isFinished,
   pauseTimer,
   remainingMs,
   resumeTimer,
   startTimer,
 } from './timer'
+
+describe('formatClock', () => {
+  it('shows minutes and seconds, rounding a partial second up', () => {
+    expect(formatClock(22000)).toBe('0:22')
+    expect(formatClock(22500)).toBe('0:23')
+    expect(formatClock(0)).toBe('0:00')
+    expect(formatClock(61000)).toBe('1:01')
+    expect(formatClock(600000)).toBe('10:00')
+  })
+})
 
 describe('timer', () => {
   it('counts down from the start time', () => {
