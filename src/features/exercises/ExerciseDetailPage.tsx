@@ -25,7 +25,7 @@ function Detail({ exercise }: { exercise: Exercise }) {
       <Link to="/library" className="text-sm underline">
         Back to library
       </Link>
-      <h1 className="text-2xl font-bold">{exercise.name}</h1>
+      <h1 className="page-title">{exercise.name}</h1>
       <div className="flex flex-wrap gap-2">
         {exercise.level && (
           <span className={badge}>{label(exercise.level)}</span>
@@ -63,7 +63,7 @@ function Detail({ exercise }: { exercise: Exercise }) {
       </dl>
 
       <section aria-labelledby="instructions-heading">
-        <h2 id="instructions-heading" className="text-lg font-semibold">
+        <h2 id="instructions-heading" className="section-title">
           Instructions
         </h2>
         {exercise.instructions.length > 0 ? (
@@ -83,10 +83,7 @@ function Detail({ exercise }: { exercise: Exercise }) {
         aria-labelledby="sources-heading"
         className="text-muted-foreground space-y-1 text-sm"
       >
-        <h2
-          id="sources-heading"
-          className="text-foreground text-lg font-semibold"
-        >
+        <h2 id="sources-heading" className="section-title text-foreground">
           Sources and license
         </h2>
         {framed && (

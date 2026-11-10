@@ -42,7 +42,7 @@ export default function LoginPage() {
 
   return (
     <div className="mx-auto max-w-sm p-6">
-      <h1 className="text-2xl font-bold">Workout Tracker</h1>
+      <h1 className="page-title">Workout Tracker</h1>
       {sent ? (
         <p className="mt-4">Check your email for the sign-in link.</p>
       ) : (

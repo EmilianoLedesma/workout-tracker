@@ -11,7 +11,7 @@ export default function CreditsPage() {
 
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="text-2xl font-bold">Credits</h1>
+      <h1 className="page-title">Credits</h1>
       <p>
         This app records and organizes training. It is not medical advice and
         does not assess whether an exercise is safe for you.
@@ -23,7 +23,7 @@ export default function CreditsPage() {
       {data && (
         <>
           <section aria-labelledby="sources-heading" className="space-y-3">
-            <h2 id="sources-heading" className="text-lg font-semibold">
+            <h2 id="sources-heading" className="section-title">
               Sources and licenses
             </h2>
             <ul className="space-y-3">

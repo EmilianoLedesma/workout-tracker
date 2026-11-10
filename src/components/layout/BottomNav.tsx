@@ -31,7 +31,8 @@ export function BottomNav() {
           className={({ isActive }) =>
             cn(
               'text-muted-foreground flex min-h-14 flex-1 flex-col items-center justify-center gap-1 text-xs md:flex-none md:flex-row md:justify-start md:gap-3 md:px-4 md:text-sm',
-              isActive && 'text-foreground font-semibold',
+              isActive &&
+                'text-foreground border-accent-fill border-t-4 font-semibold md:border-t-0 md:border-l-4',
             )
           }
         >

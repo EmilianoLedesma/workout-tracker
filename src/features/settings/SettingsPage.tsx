@@ -7,7 +7,7 @@ export default function SettingsPage() {
   const { signOut } = useSession()
   return (
     <div className="flex flex-col items-start gap-4">
-      <h1 className="text-2xl font-bold">Settings</h1>
+      <h1 className="page-title">Settings</h1>
       <EquipmentSettings />
       <Link to="/credits" className="flex min-h-11 items-center underline">
         Credits

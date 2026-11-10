@@ -83,3 +83,33 @@ it('does not show the Sign in link when signed in', () => {
   renderAt('/library')
   expect(screen.queryByRole('link', { name: 'Sign in' })).toBeNull()
 })
+
+describe('home route', () => {
+  it('shows the landing page when signed out', () => {
+    renderAt('/', null)
+    expect(
+      screen.getByRole('heading', { level: 1, name: 'Show up. Three a week.' }),
+    ).toBeInTheDocument()
+  })
+
+  it('shows the Dashboard when signed in', () => {
+    renderAt('/')
+    expect(
+      screen.getByRole('heading', { name: 'Dashboard' }),
+    ).toBeInTheDocument()
+    expect(screen.queryByText('Show up.', { exact: false })).toBeNull()
+  })
+})
+
+describe('credits link', () => {
+  it.each([
+    ['signed out', null],
+    ['signed in', signedIn],
+  ])('is in the shared footer when %s', (_label, session) => {
+    renderAt('/library', session)
+    expect(screen.getByRole('link', { name: 'Credits' })).toHaveAttribute(
+      'href',
+      '/credits',
+    )
+  })
+})

@@ -16,7 +16,7 @@ export function EquipmentSettings() {
 
   return (
     <fieldset className="w-full" disabled={isLoading}>
-      <legend className="text-lg font-semibold">Equipment</legend>
+      <legend className="section-title">Equipment</legend>
       <p className="text-muted-foreground text-sm">
         The library shows exercises you can do with what you pick here.
       </p>

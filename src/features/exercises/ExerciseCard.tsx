@@ -10,7 +10,7 @@ export function ExerciseCard({ exercise }: { exercise: Exercise }) {
   return (
     <Link
       to={`/library/${exercise.id}`}
-      className="hover:bg-muted flex min-h-16 items-center gap-3 rounded-lg border p-2"
+      className="hover:bg-muted bg-card flex min-h-16 cursor-pointer items-center gap-3 rounded-sm border p-2 transition-colors duration-200"
     >
       <ExerciseImage
         frame={exercise.frames[0]}

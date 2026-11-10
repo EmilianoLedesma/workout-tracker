@@ -86,7 +86,7 @@ export default function LibraryPage() {
 
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="text-2xl font-bold">Library</h1>
+      <h1 className="page-title">Library</h1>
       {body}
     </div>
   )

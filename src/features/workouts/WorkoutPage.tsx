@@ -1,3 +1,3 @@
 export default function WorkoutPage() {
-  return <h1 className="text-2xl font-bold">Workout</h1>
+  return <h1 className="page-title">Workout</h1>
 }
