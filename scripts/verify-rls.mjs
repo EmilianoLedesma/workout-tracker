@@ -9,7 +9,7 @@ if (!url || !key) {
   process.exit(1)
 }
 
-const TABLES = ['user_settings', 'routines', 'routine_exercises']
+const TABLES = ['user_settings', 'routines', 'routine_exercises', 'sessions']
 const headers = {
   apikey: key,
   'Content-Type': 'application/json',
