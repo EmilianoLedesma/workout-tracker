@@ -28,6 +28,7 @@ const ex = (id: string, name: string, exerciseType = 'reps') =>
 const state = vi.hoisted(() => ({
   routine: undefined as Routine | null | undefined,
   saveAsync: vi.fn(),
+  catalog: {} as { data?: { exercises: unknown[] }; isPending: boolean; isError: boolean },
 }))
 
 vi.mock('./useRoutines', () => ({
@@ -35,10 +36,7 @@ vi.mock('./useRoutines', () => ({
   useSaveRoutine: () => ({ mutateAsync: state.saveAsync }),
 }))
 vi.mock('@/features/exercises/useCatalog', () => ({
-  useCatalog: () => ({
-    data: { exercises: [ex('wg-push-up', 'Push-up'), ex('wg-squat', 'Squat')] },
-    isPending: false,
-  }),
+  useCatalog: () => state.catalog,
 }))
 vi.mock('@/features/settings/useSettings', () => ({
   useSettings: () => ({ settings: { equipment: ['bodyweight'] } }),
@@ -72,6 +70,11 @@ const renderAt = (path: string) =>
   )
 
 beforeEach(() => {
+  state.catalog = {
+    data: { exercises: [ex('wg-push-up', 'Push-up'), ex('wg-squat', 'Squat')] },
+    isPending: false,
+    isError: false,
+  }
   state.routine = existing
   state.saveAsync.mockReset()
   state.saveAsync.mockResolvedValue('r1')
@@ -121,6 +124,13 @@ describe('editing', () => {
         (i: { exerciseId: string }) => i.exerciseId,
       ),
     ).toEqual(['wg-squat', 'wg-push-up'])
+  })
+
+  it('keeps focus on the moved row', async () => {
+    renderAt('/routines/r1')
+    await userEvent.click(screen.getByRole('button', { name: 'Move Squat up' }))
+    // Squat is first now, so its up button is disabled; focus goes to its down button.
+    expect(screen.getByRole('button', { name: 'Move Squat down' })).toHaveFocus()
   })
 
   it('removes an exercise', async () => {
@@ -215,16 +225,36 @@ describe('validation accessibility', () => {
 })
 
 describe('failures', () => {
-  it('keeps the draft, shows the server error and retries', async () => {
-    state.saveAsync.mockRejectedValueOnce(new Error('nope'))
+  it('keeps the draft, shows a plain error and retries', async () => {
+    state.saveAsync.mockRejectedValueOnce(new Error('JWT expired: internals'))
     renderAt('/routines/r1')
     await userEvent.click(screen.getByRole('button', { name: 'Save' }))
-    expect(await screen.findByRole('alert')).toHaveTextContent('nope')
+    const alert = await screen.findByRole('alert')
+    expect(alert).toHaveTextContent(
+      'Could not save. Check your connection and try again.',
+    )
+    expect(alert).not.toHaveTextContent('JWT')
     expect(screen.getByLabelText('Name')).toHaveValue('Mine')
 
     await userEvent.click(screen.getByRole('button', { name: 'Try again' }))
     expect(state.saveAsync).toHaveBeenCalledTimes(2)
     expect(await screen.findByText('ROUTINES LIST')).toBeInTheDocument()
+  })
+
+  it('does not call exercises unavailable while the catalog loads', () => {
+    state.catalog = { data: undefined, isPending: true, isError: false }
+    renderAt('/routines/r1')
+    expect(screen.queryByText('Exercise no longer available')).toBeNull()
+  })
+
+  it('says so when the catalog cannot load', () => {
+    state.catalog = { data: undefined, isPending: false, isError: true }
+    renderAt('/routines/r1')
+    expect(screen.getByRole('alert')).toHaveTextContent(
+      'Could not load the exercise list.',
+    )
+    expect(screen.queryByText('No exercises found')).toBeNull()
+    expect(screen.queryByText('Exercise no longer available')).toBeNull()
   })
 
   describe('an exercise that is gone from the catalog', () => {

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router'
 import { ArrowDown, ArrowUp, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -74,6 +74,21 @@ function Editor({
 
   const names = new Map(catalog.data?.exercises.map((e) => [e.id, e.name]))
 
+  // After a move the clicked button sits on a different row: follow the moved
+  // row instead, using its other arrow when this one is disabled at an end.
+  const focusId = useRef<string | null>(null)
+  useEffect(() => {
+    if (focusId.current) document.getElementById(focusId.current)?.focus()
+    focusId.current = null
+  }, [draft])
+  const move = (i: number, dir: -1 | 1) => {
+    const to = i + dir
+    const blocked = dir === -1 ? to === 0 : to === draft.items.length - 1
+    const arrow = (dir === -1) !== blocked ? 'up' : 'down'
+    focusId.current = `item-${to}-${arrow}`
+    setDraft(moveItem(draft, i, dir))
+  }
+
   const submit = async () => {
     const found = validateDraft(draft)
     setErrors(found)
@@ -92,8 +107,8 @@ function Editor({
     try {
       await save.mutateAsync({ id: routineId, draft })
       navigate('/routines')
-    } catch (e) {
-      setSaveError(e instanceof Error ? e.message : 'Could not save')
+    } catch {
+      setSaveError('Could not save. Check your connection and try again.')
     } finally {
       setSaving(false)
     }
@@ -173,8 +188,8 @@ function Editor({
                   className="bg-card flex flex-col gap-2 rounded-sm border p-3"
                 >
                   <div>
-                    {name ? (
-                      <p className="font-medium">{name}</p>
+                    {name || !catalog.data ? (
+                      <p className="font-medium">{name ?? item.exerciseId}</p>
                     ) : (
                       <>
                         <p className="font-medium">
@@ -234,9 +249,10 @@ function Editor({
                       type="button"
                       variant="outline"
                       className="min-h-11 px-3"
+                      id={`item-${i}-up`}
                       aria-label={`Move ${who} up`}
                       disabled={i === 0}
-                      onClick={() => setDraft(moveItem(draft, i, -1))}
+                      onClick={() => move(i, -1)}
                     >
                       <ArrowUp aria-hidden="true" />
                     </Button>
@@ -244,9 +260,10 @@ function Editor({
                       type="button"
                       variant="outline"
                       className="min-h-11 px-3"
+                      id={`item-${i}-down`}
                       aria-label={`Move ${who} down`}
                       disabled={i === draft.items.length - 1}
-                      onClick={() => setDraft(moveItem(draft, i, 1))}
+                      onClick={() => move(i, 1)}
                     >
                       <ArrowDown aria-hidden="true" />
                     </Button>
@@ -274,6 +291,8 @@ function Editor({
         <div className="mt-2">
           {catalog.isPending ? (
             <p role="status">Loading exercises…</p>
+          ) : catalog.isError ? (
+            <p role="alert">Could not load the exercise list.</p>
           ) : (
             <ExercisePicker
               exercises={catalog.data?.exercises ?? []}
