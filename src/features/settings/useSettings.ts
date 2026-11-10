@@ -9,15 +9,23 @@ export type Settings = {
   weeklyGoal: number
   equipment: Equipment[]
   theme: Theme
+  /** True once the starter routines were added for this account. */
+  startersSeeded: boolean
 }
 
 export const DEFAULT_SETTINGS: Settings = {
   weeklyGoal: 3,
   equipment: ['bodyweight', 'wall', 'chair'],
   theme: 'system',
+  startersSeeded: false,
 }
 
-type Row = { weekly_goal: number; equipment: string[]; theme: Theme }
+type Row = {
+  weekly_goal: number
+  equipment: string[]
+  theme: Theme
+  starters_seeded: boolean
+}
 
 const fromRow = (row: Row): Settings => ({
   weeklyGoal: row.weekly_goal,
@@ -25,6 +33,7 @@ const fromRow = (row: Row): Settings => ({
     (EQUIPMENT as readonly string[]).includes(e),
   ),
   theme: row.theme,
+  startersSeeded: row.starters_seeded,
 })
 
 export function useSettings() {
@@ -35,7 +44,7 @@ export function useSettings() {
     queryFn: async (): Promise<Settings> => {
       const { data, error } = await getSupabase()
         .from('user_settings')
-        .select('weekly_goal, equipment, theme')
+        .select('weekly_goal, equipment, theme, starters_seeded')
         .eq('user_id', userId)
         .maybeSingle()
       if (error) throw new Error(error.message)

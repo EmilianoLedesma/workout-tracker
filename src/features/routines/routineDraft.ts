@@ -10,6 +10,8 @@ export type Draft = {
 export type ItemField = 'sets' | 'target' | 'rest'
 export type DraftErrors = {
   name?: string
+  /** Problem with the list as a whole, such as too many exercises. */
+  limit?: string
   items: Record<number, string>
   /** Which input of an item is wrong, so the editor can mark and focus it. */
   itemFields: Record<number, ItemField>
@@ -59,6 +61,9 @@ export const draftFromRoutine = (r: Routine): Draft => ({
   items: r.items,
 })
 
+// Matches the check in save_routine (migration 0004).
+const MAX_ITEMS = 50
+
 const inRange = (n: number, min: number, max: number) =>
   Number.isInteger(n) && n >= min && n <= max
 
@@ -84,6 +89,9 @@ export function validateDraft(d: Draft): DraftErrors {
   const name = d.name.trim()
   if (!name) errors.name = 'Name is required'
   else if (name.length > 60) errors.name = 'Name must be 60 characters or fewer'
+  if (d.items.length > MAX_ITEMS) {
+    errors.limit = `A routine can have at most ${MAX_ITEMS} exercises`
+  }
   d.items.forEach((item, i) => {
     const found = itemError(item)
     if (found) {

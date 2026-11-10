@@ -92,6 +92,7 @@ function Editor({
   const submit = async () => {
     const found = validateDraft(draft)
     setErrors(found)
+    if (found.limit) return
     const firstItem = Object.keys(found.items)[0]
     const firstBad = found.name
       ? 'routine-name'
@@ -174,6 +175,11 @@ function Editor({
         <h2 id="routine-exercises-heading" className="section-title">
           Exercises
         </h2>
+        {errors.limit && (
+          <p role="alert" className="text-destructive mt-2 text-sm">
+            {errors.limit}
+          </p>
+        )}
         {draft.items.length === 0 ? (
           <p className="text-muted-foreground mt-2">No exercises yet</p>
         ) : (

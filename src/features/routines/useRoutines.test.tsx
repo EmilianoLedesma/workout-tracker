@@ -284,6 +284,25 @@ describe('useDuplicateRoutine', () => {
   })
 })
 
+describe('useSeedStarters refresh', () => {
+  it('refreshes the settings so the saved flag is picked up', async () => {
+    const client = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    })
+    const spy = vi.spyOn(client, 'invalidateQueries')
+    const w = ({ children }: { children: ReactNode }) => (
+      <AuthContext value={{ session, loading: false, signOut: async () => {} }}>
+        <QueryClientProvider client={client}>{children}</QueryClientProvider>
+      </AuthContext>
+    )
+    const { result } = renderHook(() => useSeedStarters(), { wrapper: w })
+    await act(async () => {
+      await result.current.mutateAsync()
+    })
+    expect(spy).toHaveBeenCalledWith({ queryKey: ['settings'] })
+  })
+})
+
 describe('useSeedStarters', () => {
   it('sends the three starter routines in snake_case', async () => {
     const { result } = renderHook(() => useSeedStarters(), { wrapper })

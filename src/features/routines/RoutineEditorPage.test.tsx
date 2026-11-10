@@ -205,6 +205,21 @@ describe('validation', () => {
   })
 })
 
+describe('exercise limit', () => {
+  it('says so instead of saving more than 50 exercises', async () => {
+    state.routine = {
+      ...existing,
+      items: Array.from({ length: 51 }, (_, i) => item('wg-x' + i)),
+    }
+    renderAt('/routines/r1')
+    await userEvent.click(screen.getByRole('button', { name: 'Save' }))
+    expect(
+      screen.getByText('A routine can have at most 50 exercises'),
+    ).toBeInTheDocument()
+    expect(state.saveAsync).not.toHaveBeenCalled()
+  })
+})
+
 describe('validation accessibility', () => {
   it('marks the wrong field, links its message and moves focus to it', async () => {
     renderAt('/routines/r1')

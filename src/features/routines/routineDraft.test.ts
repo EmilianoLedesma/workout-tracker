@@ -106,6 +106,14 @@ describe('editing', () => {
 })
 
 describe('validateDraft', () => {
+  it('allows at most 50 exercises', () => {
+    const ids = Array.from({ length: 51 }, (_, i) => 'e' + i)
+    expect(validateDraft(draft(...ids.slice(0, 50))).limit).toBeUndefined()
+    expect(validateDraft(draft(...ids)).limit).toBe(
+      'A routine can have at most 50 exercises',
+    )
+  })
+
   it('returns no errors for a valid draft, including one with no exercises', () => {
     expect(validateDraft(draft('a'))).toEqual({ items: {}, itemFields: {} })
     expect(validateDraft({ name: 'Empty', dayLabel: null, items: [] })).toEqual(

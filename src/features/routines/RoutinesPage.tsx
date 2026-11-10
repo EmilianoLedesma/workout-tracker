@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router'
 import { Copy, Pencil, Plus, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { useSettings } from '@/features/settings/useSettings'
 import type { Routine } from '@/types/routine'
 import {
   useDeleteRoutine,
@@ -15,6 +16,7 @@ const badge = 'bg-secondary rounded-sm px-2 py-0.5 text-xs font-medium'
 export default function RoutinesPage() {
   const { routines, isLoading, error, refetch } = useRoutines()
   const seed = useSeedStarters()
+  const { settings, isLoading: settingsLoading } = useSettings()
   const remove = useDeleteRoutine()
   const duplicate = useDuplicateRoutine()
   const [confirmingId, setConfirmingId] = useState<string | null>(null)
@@ -30,11 +32,25 @@ export default function RoutinesPage() {
   // remembers it ran, so they never come back after the owner deletes them.
   const seeded = useRef(false)
   useEffect(() => {
-    if (!isLoading && !error && routines.length === 0 && !seeded.current) {
+    if (
+      !isLoading &&
+      !settingsLoading &&
+      !settings.startersSeeded &&
+      !error &&
+      routines.length === 0 &&
+      !seeded.current
+    ) {
       seeded.current = true
       seed.mutate()
     }
-  }, [isLoading, error, routines.length, seed])
+  }, [
+    isLoading,
+    settingsLoading,
+    settings.startersSeeded,
+    error,
+    routines.length,
+    seed,
+  ])
 
   let body
   if (isLoading) {

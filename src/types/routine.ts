@@ -4,7 +4,7 @@ export const DAY_LABELS = ['A', 'B', 'C', 'D', 'E', 'F', 'G'] as const
 export type DayLabel = (typeof DAY_LABELS)[number]
 
 export const routineExerciseSchema = z.object({
-  exerciseId: z.string().min(1),
+  exerciseId: z.string().min(1).max(100),
   sets: z.number().int().min(1).max(10),
   targetType: z.enum(['reps', 'seconds']),
   target: z.number().int().min(1).max(600),

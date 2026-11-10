@@ -45,6 +45,7 @@ it('maps an existing row to settings', async () => {
       weekly_goal: 5,
       equipment: ['bodyweight', 'nonsense'],
       theme: 'dark',
+      starters_seeded: true,
     },
     error: null,
   })
@@ -54,7 +55,15 @@ it('maps an existing row to settings', async () => {
     weeklyGoal: 5,
     equipment: ['bodyweight'],
     theme: 'dark',
+    startersSeeded: true,
   })
+})
+
+it('treats a missing settings row as starters not yet added', async () => {
+  mocks.maybeSingle.mockResolvedValue({ data: null, error: null })
+  const { result } = renderHook(() => useSettings(), { wrapper })
+  await waitFor(() => expect(result.current.isLoading).toBe(false))
+  expect(result.current.settings.startersSeeded).toBe(false)
 })
 
 it('upserts with user_id and snake_case columns', async () => {

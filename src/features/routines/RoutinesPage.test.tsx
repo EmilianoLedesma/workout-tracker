@@ -11,12 +11,21 @@ const state = vi.hoisted(() => ({
   refetch: vi.fn(),
   seed: vi.fn(),
   seedError: null as Error | null,
+  startersSeeded: false,
+  settingsLoading: false,
   remove: vi.fn(),
   duplicate: vi.fn(),
   removeError: null as Error | null,
   duplicateError: null as Error | null,
   removePending: false,
   duplicatePending: false,
+}))
+
+vi.mock('@/features/settings/useSettings', () => ({
+  useSettings: () => ({
+    settings: { startersSeeded: state.startersSeeded },
+    isLoading: state.settingsLoading,
+  }),
 }))
 
 vi.mock('./useRoutines', () => ({
@@ -82,6 +91,8 @@ beforeEach(() => {
   state.refetch.mockReset()
   state.seed.mockReset()
   state.seedError = null
+  state.startersSeeded = false
+  state.settingsLoading = false
   state.remove.mockReset()
   state.duplicate.mockReset()
 })
@@ -186,6 +197,21 @@ it('offers a retry when seeding the starters failed', async () => {
   state.seed.mockClear()
   await userEvent.click(screen.getByRole('button', { name: 'Try again' }))
   expect(state.seed).toHaveBeenCalledTimes(1)
+})
+
+it('does not ask the server to seed once the starters were already added', () => {
+  state.routines = []
+  state.startersSeeded = true
+  renderPage()
+  expect(state.seed).not.toHaveBeenCalled()
+  expect(screen.getByText('No routines yet')).toBeInTheDocument()
+})
+
+it('waits for the settings before deciding to seed', () => {
+  state.routines = []
+  state.settingsLoading = true
+  renderPage()
+  expect(state.seed).not.toHaveBeenCalled()
 })
 
 it('does not seed while loading or when routines exist', () => {

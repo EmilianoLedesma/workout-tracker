@@ -157,6 +157,7 @@ export function useDuplicateRoutine() {
 
 export function useSeedStarters() {
   const invalidate = useInvalidateRoutines()
+  const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async () => {
       const { error } = await getSupabase().rpc('seed_starter_routines', {
@@ -168,6 +169,10 @@ export function useSeedStarters() {
       })
       if (error) throw new Error(error.message)
     },
-    onSuccess: invalidate,
+    onSuccess: () => {
+      // The saved flag lives in the settings row: the page reads it to skip the call.
+      void queryClient.invalidateQueries({ queryKey: ['settings'] })
+      return invalidate()
+    },
   })
 }
