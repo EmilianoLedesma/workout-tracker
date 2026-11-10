@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router'
 import type { Routine } from '@/types/routine'
 import { saveDraft } from '@/features/workouts/workoutDraft'
-import { createWorkout } from '@/features/workouts/workoutState'
+import { createWorkout, reduce } from '@/features/workouts/workoutState'
 import RoutinesPage from './RoutinesPage'
 
 const state = vi.hoisted(() => ({
@@ -112,6 +112,25 @@ describe('starting a workout', () => {
   it('has no banner when no workout is unfinished', () => {
     renderPage()
     expect(screen.queryByText('Workout in progress')).toBeNull()
+  })
+
+  it('shows a finished workout that is not saved yet', () => {
+    const finished = reduce(
+      createWorkout({
+        id: 'w1',
+        routine: full,
+        now: Date.now(),
+        uid: () => 'u',
+      }),
+      { type: 'finish', note: '', now: Date.now() + 1000 },
+    )
+    saveDraft(finished)
+    renderPage()
+    expect(screen.getByText('Workout not saved yet')).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Open' })).toHaveAttribute(
+      'href',
+      '/workout/r1',
+    )
   })
 
   it('offers to continue an unfinished workout', () => {

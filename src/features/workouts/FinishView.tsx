@@ -14,6 +14,8 @@ type Props = {
   summary: SessionPayload | null
   onSave: (note: string) => void
   onRetry: () => void
+  /** Throws the workout away; only offered when saving keeps failing. */
+  onDiscard: () => void
 }
 
 type Row = { id: string; done: number; total: number }
@@ -43,8 +45,10 @@ export function FinishView({
   summary,
   onSave,
   onRetry,
+  onDiscard,
 }: Props) {
   const [note, setNote] = useState('')
+  const [confirmingDelete, setConfirmingDelete] = useState(false)
   const rows = summary
     ? fromSummary(summary)
     : workout
@@ -127,6 +131,37 @@ export function FinishView({
           >
             Try again
           </Button>
+          {confirmingDelete ? (
+            <div className="flex flex-wrap items-center gap-2">
+              <p className="w-full text-sm">
+                Delete this workout for good? It has not been saved anywhere.
+              </p>
+              <Button
+                type="button"
+                className="min-h-11 px-4 font-bold"
+                onClick={onDiscard}
+              >
+                Delete it
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                className="min-h-11 px-4 font-bold"
+                onClick={() => setConfirmingDelete(false)}
+              >
+                Keep it
+              </Button>
+            </div>
+          ) : (
+            <Button
+              type="button"
+              variant="outline"
+              className="min-h-11 px-4 font-bold"
+              onClick={() => setConfirmingDelete(true)}
+            >
+              Delete this workout
+            </Button>
+          )}
         </div>
       )}
 

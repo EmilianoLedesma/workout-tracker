@@ -45,6 +45,7 @@ const finished = () =>
 const setup = (props: Partial<React.ComponentProps<typeof FinishView>>) => {
   const onSave = vi.fn()
   const onRetry = vi.fn()
+  const onDiscard = vi.fn()
   const view = render(
     <MemoryRouter>
       <FinishView
@@ -54,11 +55,12 @@ const setup = (props: Partial<React.ComponentProps<typeof FinishView>>) => {
         summary={null}
         onSave={onSave}
         onRetry={onRetry}
+        onDiscard={onDiscard}
         {...props}
       />
     </MemoryRouter>,
   )
-  return { onSave, onRetry, view }
+  return { onSave, onRetry, onDiscard, view }
 }
 
 describe('before saving', () => {
@@ -90,6 +92,21 @@ describe('after finishing', () => {
     )
     await userEvent.click(screen.getByRole('button', { name: 'Try again' }))
     expect(onRetry).toHaveBeenCalled()
+  })
+
+  it('lets you delete a workout that cannot be saved, after confirming', async () => {
+    const { onDiscard } = setup({ workout: finished(), saveStatus: 'error' })
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Delete this workout' }),
+    )
+    expect(onDiscard).not.toHaveBeenCalled()
+    await userEvent.click(screen.getByRole('button', { name: 'Keep it' }))
+    expect(screen.queryByRole('button', { name: 'Delete it' })).toBeNull()
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Delete this workout' }),
+    )
+    await userEvent.click(screen.getByRole('button', { name: 'Delete it' }))
+    expect(onDiscard).toHaveBeenCalledTimes(1)
   })
 
   it('shows the saved summary with a way back', () => {

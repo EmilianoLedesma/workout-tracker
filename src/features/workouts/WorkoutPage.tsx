@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Link, useParams } from 'react-router'
+import { Link, useNavigate, useParams } from 'react-router'
 import { Button } from '@/components/ui/button'
 import { useCatalog } from '@/features/exercises/useCatalog'
 import { useRoutine } from '@/features/routines/useRoutines'
@@ -17,6 +17,7 @@ const outline = 'min-h-11 w-full border-2 border-foreground font-bold'
 
 export default function WorkoutPage() {
   const { routineId = '' } = useParams()
+  const navigate = useNavigate()
   // A draft found on arrival is continued without asking only when it belongs
   // to this routine and is recent. A finished one is just waiting to be saved.
   // While asking, the session hook is held so nothing runs behind the prompt.
@@ -59,6 +60,12 @@ export default function WorkoutPage() {
       summary={summary}
       onSave={(note) => act({ type: 'finish', note })}
       onRetry={save.retry}
+      onDiscard={() => {
+        // Stop the page starting a fresh workout of this routine in its place.
+        started.current = true
+        discard()
+        navigate('/routines')
+      }}
     />
   )
 

@@ -270,6 +270,21 @@ describe('after finishing', () => {
     expect(screen.getByRole('status')).toHaveTextContent('Saving…')
   })
 
+  it('deletes a workout that cannot be saved and goes back to routines', async () => {
+    const done = reduce(fresh(), { type: 'finish', note: '', now: Date.now() })
+    state.session = makeSession({
+      workout: done,
+      save: { status: 'error', retry: vi.fn() },
+    })
+    renderPage()
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Delete this workout' }),
+    )
+    await userEvent.click(screen.getByRole('button', { name: 'Delete it' }))
+    expect(session().discard).toHaveBeenCalled()
+    expect(screen.getByText('ROUTINES LIST')).toBeInTheDocument()
+  })
+
   it('shows the saved summary', () => {
     state.session = makeSession({
       workout: null,

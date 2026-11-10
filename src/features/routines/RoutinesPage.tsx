@@ -115,17 +115,19 @@ export default function RoutinesPage() {
         Starter routines are a suggestion, not advice. Edit or delete them
         freely.
       </p>
-      {draft && !draft.finish && (
+      {draft && (
         <div className="bg-card flex items-center justify-between gap-3 rounded-sm border p-3">
           <div>
-            <p className="font-medium">Workout in progress</p>
+            <p className="font-medium">
+              {draft.finish ? 'Workout not saved yet' : 'Workout in progress'}
+            </p>
             <p className="text-muted-foreground text-sm">{draft.routineName}</p>
           </div>
           <Button asChild className="min-h-11 px-4">
             <Link
               to={draft.routineId ? `/workout/${draft.routineId}` : '/routines'}
             >
-              Continue
+              {draft.finish ? 'Open' : 'Continue'}
             </Link>
           </Button>
         </div>
