@@ -2,6 +2,8 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router'
 import type { Routine } from '@/types/routine'
+import { saveDraft } from '@/features/workouts/workoutDraft'
+import { createWorkout } from '@/features/workouts/workoutState'
 import RoutinesPage from './RoutinesPage'
 
 const state = vi.hoisted(() => ({
@@ -95,6 +97,39 @@ beforeEach(() => {
   state.settingsLoading = false
   state.remove.mockReset()
   state.duplicate.mockReset()
+})
+
+describe('starting a workout', () => {
+  beforeEach(() => localStorage.clear())
+
+  it('has a Start link on each routine', () => {
+    renderPage()
+    expect(
+      screen.getByRole('link', { name: 'Start Full body baseline' }),
+    ).toHaveAttribute('href', '/workout/r1')
+  })
+
+  it('has no banner when no workout is unfinished', () => {
+    renderPage()
+    expect(screen.queryByText('Workout in progress')).toBeNull()
+  })
+
+  it('offers to continue an unfinished workout', () => {
+    saveDraft(
+      createWorkout({
+        id: 'w1',
+        routine: full,
+        now: Date.now(),
+        uid: () => 'u',
+      }),
+    )
+    renderPage()
+    expect(screen.getByText('Workout in progress')).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Continue' })).toHaveAttribute(
+      'href',
+      '/workout/r1',
+    )
+  })
 })
 
 it('shows each routine with its day label, exercise count and Starter badge', () => {

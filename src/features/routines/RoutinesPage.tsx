@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router'
-import { Copy, Pencil, Plus, Trash2 } from 'lucide-react'
+import { Copy, Pencil, Play, Plus, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useSettings } from '@/features/settings/useSettings'
+import { loadDraft } from '@/features/workouts/workoutDraft'
 import type { Routine } from '@/types/routine'
 import {
   useDeleteRoutine,
@@ -20,6 +21,8 @@ export default function RoutinesPage() {
   const remove = useDeleteRoutine()
   const duplicate = useDuplicateRoutine()
   const [confirmingId, setConfirmingId] = useState<string | null>(null)
+  // An unfinished workout on this phone, read once when the page opens.
+  const [draft] = useState(() => loadDraft())
   // One request at a time: a double tap must not make two copies.
   const busy = remove.isPending || duplicate.isPending
   const failure = remove.error
@@ -112,6 +115,21 @@ export default function RoutinesPage() {
         Starter routines are a suggestion, not advice. Edit or delete them
         freely.
       </p>
+      {draft && !draft.finish && (
+        <div className="bg-card flex items-center justify-between gap-3 rounded-sm border p-3">
+          <div>
+            <p className="font-medium">Workout in progress</p>
+            <p className="text-muted-foreground text-sm">{draft.routineName}</p>
+          </div>
+          <Button asChild className="min-h-11 px-4">
+            <Link
+              to={draft.routineId ? `/workout/${draft.routineId}` : '/routines'}
+            >
+              Continue
+            </Link>
+          </Button>
+        </div>
+      )}
       {failure && <p role="alert">{failure}</p>}
       {body}
     </div>
@@ -136,6 +154,17 @@ function RoutineCard({
   onDuplicate: () => void
 }) {
   const count = routine.items.length
+  // Moving between the buttons and the confirmation drops the focused element,
+  // so put focus where the keyboard user expects it: Cancel when the question
+  // opens, the Delete button again when it is dismissed.
+  const cancelRef = useRef<HTMLButtonElement>(null)
+  const deleteRef = useRef<HTMLButtonElement>(null)
+  const wasConfirming = useRef(false)
+  useEffect(() => {
+    if (confirming) cancelRef.current?.focus()
+    else if (wasConfirming.current) deleteRef.current?.focus()
+    wasConfirming.current = confirming
+  }, [confirming])
   return (
     <li className="bg-card flex flex-col gap-3 rounded-sm border p-4">
       <div>
@@ -161,6 +190,7 @@ function RoutineCard({
             Delete
           </Button>
           <Button
+            ref={cancelRef}
             variant="outline"
             className="min-h-11 px-4"
             onClick={onCancelDelete}
@@ -170,6 +200,15 @@ function RoutineCard({
         </div>
       ) : (
         <div className="flex flex-wrap gap-2">
+          <Button asChild className="min-h-11 px-4">
+            <Link
+              to={`/workout/${routine.id}`}
+              aria-label={`Start ${routine.name}`}
+            >
+              <Play aria-hidden="true" />
+              Start
+            </Link>
+          </Button>
           <Button
             asChild
             variant="outline"
@@ -192,6 +231,7 @@ function RoutineCard({
             Duplicate
           </Button>
           <Button
+            ref={deleteRef}
             variant="outline"
             className="min-h-11 px-3"
             aria-label={`Delete ${routine.name}`}
