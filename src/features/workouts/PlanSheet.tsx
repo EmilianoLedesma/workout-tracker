@@ -6,7 +6,7 @@ import type { Equipment } from '@/lib/catalog/vocab'
 import type { Exercise } from '@/types/exercise'
 import type { Workout } from '@/types/workout'
 import type { Act } from './SetView'
-import { currentSet } from './workoutState'
+import { planTarget } from './workoutState'
 
 type Props = {
   workout: Workout
@@ -31,7 +31,7 @@ export function PlanSheet({
   const [adding, setAdding] = useState(false)
   const names = new Map(exercises.map((e) => [e.id, e.name]))
   const nameOf = (id: string) => names.get(id) ?? 'Exercise no longer available'
-  const cur = currentSet(workout)
+  const target = planTarget(workout)
   const active = workout.exercises.filter((e) => e.status === 'active')
 
   return (
@@ -56,11 +56,9 @@ export function PlanSheet({
         Changes here apply to today only. Edit the routine in Routines.
       </p>
 
-      {cur && (
+      {target && (
         <>
-          <p className={heading}>
-            This exercise: {nameOf(cur.exercise.exerciseId)}
-          </p>
+          <p className={heading}>This exercise: {nameOf(target.exerciseId)}</p>
           <Button
             type="button"
             variant="outline"
@@ -69,14 +67,16 @@ export function PlanSheet({
           >
             Add a set
           </Button>
-          <Button
-            type="button"
-            variant="outline"
-            className={wide}
-            onClick={() => act({ type: 'skipExercise' })}
-          >
-            Skip this exercise
-          </Button>
+          {workout.phase === 'set' && (
+            <Button
+              type="button"
+              variant="outline"
+              className={wide}
+              onClick={() => act({ type: 'skipExercise' })}
+            >
+              Skip this exercise
+            </Button>
+          )}
         </>
       )}
 

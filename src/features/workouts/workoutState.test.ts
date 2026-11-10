@@ -4,6 +4,7 @@ import {
   counts,
   createWorkout,
   currentSet,
+  planTarget,
   reduce,
   toSessionPayload,
   type Action,
@@ -222,6 +223,39 @@ describe('changing the plan', () => {
     })
     const full = start(item('a', { sets: 10 }))
     expect(reduce(full, { type: 'addSet', now: 1 })).toBe(full)
+  })
+
+  it('adds the set to the exercise just done while resting, and plays it next', () => {
+    const resting = reduce(start(item('a', { sets: 1 }), item('b')), {
+      type: 'completeSet',
+      now: 1000,
+    })
+    expect(resting.cursor).toEqual({ exercise: 1, set: 0 })
+    expect(planTarget(resting)?.exerciseId).toBe('a')
+    const c = reduce(resting, { type: 'addSet', now: 2000 })
+    expect(c.exercises[0].sets).toHaveLength(2)
+    expect(c.exercises[1].sets).toHaveLength(2)
+    expect(c.cursor).toEqual({ exercise: 0, set: 1 })
+    expect(c.phase).toBe('rest')
+    const next = reduce(c, { type: 'endRest', now: 3000 })
+    expect(currentSet(next)?.exercise.exerciseId).toBe('a')
+  })
+
+  it('targets the last active exercise once every set is done', () => {
+    const review = reduce(
+      start(item('a', { sets: 1 }), item('b', { sets: 1 })),
+      {
+        type: 'completeSet',
+        now: 1000,
+      },
+    )
+    const done = reduce(reduce(review, { type: 'endRest', now: 2000 }), {
+      type: 'completeSet',
+      now: 3000,
+    })
+    expect(done.phase).toBe('review')
+    expect(planTarget(done)?.exerciseId).toBe('b')
+    expect(planTarget(start())).toBeNull()
   })
 
   it('reopens a finished workout when a set is added', () => {

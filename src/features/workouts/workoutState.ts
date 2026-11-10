@@ -134,6 +134,22 @@ const lastActiveIndex = (exercises: WorkoutExercise[]) => {
   return -1
 }
 
+/**
+ * The exercise "Add a set" applies to: the one in play, the one just done while
+ * resting (the cursor already points at the next exercise), or the last active
+ * one once every set is done.
+ */
+function planTargetIndex(w: Workout): number {
+  if (w.phase === 'review') return lastActiveIndex(w.exercises)
+  if (w.phase === 'rest' && w.lastDone) return w.lastDone.exercise
+  return w.cursor.exercise
+}
+
+export function planTarget(w: Workout): WorkoutExercise | null {
+  const ex = w.exercises[planTargetIndex(w)]
+  return ex?.status === 'active' ? ex : null
+}
+
 export function reduce(w: Workout, a: Action): Workout {
   if (w.finish) return w
   if (w.paused && a.type !== 'resume' && a.type !== 'finish') return w
@@ -225,8 +241,7 @@ export function reduce(w: Workout, a: Action): Workout {
         : w
 
     case 'addSet': {
-      const index =
-        w.phase === 'review' ? lastActiveIndex(w.exercises) : w.cursor.exercise
+      const index = planTargetIndex(w)
       const ex = w.exercises[index]
       if (!ex || ex.status !== 'active' || ex.sets.length >= MAX_SETS) return w
       const last = ex.sets[ex.sets.length - 1]
@@ -238,15 +253,17 @@ export function reduce(w: Workout, a: Action): Workout {
       const exercises = replaceExercise(w.exercises, index, {
         sets: [...ex.sets, added],
       })
-      return w.phase === 'review'
-        ? {
+      // After the last set, or during rest, the cursor is elsewhere: move it to
+      // the new set so it is the one played next.
+      return w.phase === 'set'
+        ? { ...w, exercises, updatedAt: now }
+        : {
             ...w,
             exercises,
             cursor: { exercise: index, set: ex.sets.length },
-            phase: 'set',
+            phase: w.phase === 'review' ? 'set' : w.phase,
             updatedAt: now,
           }
-        : { ...w, exercises, updatedAt: now }
     }
 
     case 'addExercise': {

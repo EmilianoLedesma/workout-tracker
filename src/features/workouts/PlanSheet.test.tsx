@@ -161,15 +161,39 @@ it('finishes early and closes', async () => {
   expect(onClose).toHaveBeenCalled()
 })
 
-it('hides the current-exercise actions once every set is done', () => {
+const finishAll = () => {
   let w = fresh()
   for (let i = 0; i < 4; i++) {
     w = reduce(w, { type: 'completeSet', now: i * 100000 })
     w = reduce(w, { type: 'endRest', now: i * 100000 + 1 })
   }
+  return w
+}
+
+it('still lets you add a set to the last exercise once every set is done', async () => {
+  const w = finishAll()
   expect(w.phase).toBe('review')
+  const { act } = setup(w)
+  expect(screen.getByText('This exercise: Squat')).toBeInTheDocument()
+  await userEvent.click(screen.getByRole('button', { name: 'Add a set' }))
+  expect(act).toHaveBeenLastCalledWith({ type: 'addSet' })
+  expect(
+    screen.queryByRole('button', { name: 'Skip this exercise' }),
+  ).toBeNull()
+})
+
+it('names the exercise just done while resting and offers no skip', () => {
+  let w = fresh()
+  w = reduce(w, { type: 'completeSet', now: 0 })
+  w = reduce(w, { type: 'endRest', now: 1 })
+  w = reduce(w, { type: 'completeSet', now: 100000 })
+  expect(w.phase).toBe('rest')
   setup(w)
-  expect(screen.queryByRole('button', { name: 'Add a set' })).toBeNull()
+  expect(screen.getByText('This exercise: Wall push-up')).toBeInTheDocument()
+  expect(screen.getByRole('button', { name: 'Add a set' })).toBeInTheDocument()
+  expect(
+    screen.queryByRole('button', { name: 'Skip this exercise' }),
+  ).toBeNull()
 })
 
 it('keeps every button at least 44 px high', () => {
