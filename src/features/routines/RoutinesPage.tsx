@@ -18,6 +18,13 @@ export default function RoutinesPage() {
   const remove = useDeleteRoutine()
   const duplicate = useDuplicateRoutine()
   const [confirmingId, setConfirmingId] = useState<string | null>(null)
+  // One request at a time: a double tap must not make two copies.
+  const busy = remove.isPending || duplicate.isPending
+  const failure = remove.error
+    ? 'Could not delete the routine. Try again.'
+    : duplicate.error
+      ? 'Could not duplicate the routine. Try again.'
+      : null
 
   // First visit: copy the starters once. The SQL function is idempotent and
   // remembers it ran, so they never come back after the owner deletes them.
@@ -51,6 +58,7 @@ export default function RoutinesPage() {
             key={routine.id}
             routine={routine}
             confirming={confirmingId === routine.id}
+            busy={busy}
             onAskDelete={() => setConfirmingId(routine.id)}
             onCancelDelete={() => setConfirmingId(null)}
             onDelete={() => {
@@ -79,6 +87,7 @@ export default function RoutinesPage() {
         Starter routines are a suggestion, not advice. Edit or delete them
         freely.
       </p>
+      {failure && <p role="alert">{failure}</p>}
       {body}
     </div>
   )
@@ -87,6 +96,7 @@ export default function RoutinesPage() {
 function RoutineCard({
   routine,
   confirming,
+  busy,
   onAskDelete,
   onCancelDelete,
   onDelete,
@@ -94,6 +104,7 @@ function RoutineCard({
 }: {
   routine: Routine
   confirming: boolean
+  busy: boolean
   onAskDelete: () => void
   onCancelDelete: () => void
   onDelete: () => void
@@ -149,6 +160,7 @@ function RoutineCard({
             variant="outline"
             className="min-h-11 px-3"
             aria-label={`Duplicate ${routine.name}`}
+            disabled={busy}
             onClick={onDuplicate}
           >
             <Copy aria-hidden="true" />
@@ -158,6 +170,7 @@ function RoutineCard({
             variant="outline"
             className="min-h-11 px-3"
             aria-label={`Delete ${routine.name}`}
+            disabled={busy}
             onClick={onAskDelete}
           >
             <Trash2 aria-hidden="true" />

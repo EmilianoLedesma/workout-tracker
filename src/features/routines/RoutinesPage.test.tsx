@@ -12,6 +12,10 @@ const state = vi.hoisted(() => ({
   seed: vi.fn(),
   remove: vi.fn(),
   duplicate: vi.fn(),
+  removeError: null as Error | null,
+  duplicateError: null as Error | null,
+  removePending: false,
+  duplicatePending: false,
 }))
 
 vi.mock('./useRoutines', () => ({
@@ -22,8 +26,16 @@ vi.mock('./useRoutines', () => ({
     refetch: state.refetch,
   }),
   useSeedStarters: () => ({ mutate: state.seed }),
-  useDeleteRoutine: () => ({ mutate: state.remove }),
-  useDuplicateRoutine: () => ({ mutate: state.duplicate }),
+  useDeleteRoutine: () => ({
+    mutate: state.remove,
+    error: state.removeError,
+    isPending: state.removePending,
+  }),
+  useDuplicateRoutine: () => ({
+    mutate: state.duplicate,
+    error: state.duplicateError,
+    isPending: state.duplicatePending,
+  }),
 }))
 
 const full: Routine = {
@@ -61,6 +73,10 @@ beforeEach(() => {
     routines: [full],
     isLoading: false,
     error: null,
+    removeError: null,
+    duplicateError: null,
+    removePending: false,
+    duplicatePending: false,
   })
   state.refetch.mockReset()
   state.seed.mockReset()
@@ -161,4 +177,62 @@ it('seeds the starters once when a first visit finds no routines', () => {
 it('does not seed while loading or when routines exist', () => {
   renderPage()
   expect(state.seed).not.toHaveBeenCalled()
+})
+
+describe('feedback', () => {
+  it('says when a delete failed', () => {
+    state.removeError = new Error('x')
+    renderPage()
+    expect(screen.getByRole('alert')).toHaveTextContent(
+      'Could not delete the routine. Try again.',
+    )
+  })
+
+  it('says when a duplicate failed', () => {
+    state.duplicateError = new Error('x')
+    renderPage()
+    expect(screen.getByRole('alert')).toHaveTextContent(
+      'Could not duplicate the routine. Try again.',
+    )
+  })
+
+  it('disables Duplicate and Delete while a duplicate is saving', () => {
+    state.duplicatePending = true
+    renderPage()
+    expect(
+      screen.getByRole('button', { name: 'Duplicate Full body baseline' }),
+    ).toBeDisabled()
+    expect(
+      screen.getByRole('button', { name: 'Delete Full body baseline' }),
+    ).toBeDisabled()
+  })
+
+  it('disables the buttons while a delete is saving', () => {
+    state.removePending = true
+    renderPage()
+    expect(
+      screen.getByRole('button', { name: 'Duplicate Full body baseline' }),
+    ).toBeDisabled()
+  })
+})
+
+describe('keyboard focus', () => {
+  it('moves focus to Cancel when the delete confirmation opens', async () => {
+    renderPage()
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Delete Full body baseline' }),
+    )
+    expect(screen.getByRole('button', { name: 'Cancel' })).toHaveFocus()
+  })
+
+  it('returns focus to the Delete button after Cancel', async () => {
+    renderPage()
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Delete Full body baseline' }),
+    )
+    await userEvent.click(screen.getByRole('button', { name: 'Cancel' }))
+    expect(
+      screen.getByRole('button', { name: 'Delete Full body baseline' }),
+    ).toHaveFocus()
+  })
 })
