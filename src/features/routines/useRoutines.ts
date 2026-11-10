@@ -75,6 +75,7 @@ export function useRoutines() {
     routines: query.data ?? [],
     isLoading: query.isLoading,
     error: query.error,
+    refetch: query.refetch,
   }
 }
 
