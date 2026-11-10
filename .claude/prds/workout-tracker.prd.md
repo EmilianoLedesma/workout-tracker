@@ -46,7 +46,7 @@ We'll know we're right when **the owner completes 3 sessions in at least 10 of t
 | --- | ------------------------- | -------------------------------------------------------------------------------------- | -------- | ----------------------------------------------- |
 | 1   | Foundation                | App opens on a phone, owner can sign in, navigation shell works                        | complete | docs/superpowers/plans/2026-11-09-foundation.md |
 | 2   | Catalog                   | Owner can browse, search and filter a large illustrated exercise library, with credits | complete | docs/superpowers/plans/2026-11-09-catalog.md    |
-| 3   | Routines                  | Owner can use and edit starter A/B/C or build their own                                | pending  | —                                               |
+| 3   | Routines                  | Owner can use and edit starter A/B/C or build their own                                | complete | docs/superpowers/plans/2026-11-10-routines.md   |
 | 4   | Active workout            | Owner can run a session and save it                                                    | pending  | —                                               |
 | 5   | Progress and gamification | Owner sees history, charts, weekly ring, streak and badges                             | pending  | —                                               |
 | 6   | Offline and hardening     | Library works offline, data can be exported and imported, tested on mobile browsers    | pending  | —                                               |
