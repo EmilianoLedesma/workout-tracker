@@ -5,6 +5,7 @@ import type { Exercise } from '@/types/exercise'
 import type { Routine } from '@/types/routine'
 import type { Workout } from '@/types/workout'
 import WorkoutPage from './WorkoutPage'
+import { saveDraft } from './workoutDraft'
 import { createWorkout, reduce } from './workoutState'
 
 const ex = (id: string, name: string) =>
@@ -110,6 +111,7 @@ const renderPage = (path = '/workout/r1') =>
   )
 
 beforeEach(() => {
+  localStorage.clear()
   state.routine = routine
   state.routineError = null
   state.session = makeSession()
@@ -170,6 +172,7 @@ describe('an unfinished workout', () => {
 
   it('asks before replacing a draft of another routine', async () => {
     const other = { ...fresh(), routineId: 'r9', routineName: 'Other' }
+    saveDraft(other)
     state.session = makeSession({ workout: other })
     renderPage()
     expect(screen.getByText(/Other/)).toBeInTheDocument()
@@ -181,6 +184,7 @@ describe('an unfinished workout', () => {
 
   it('asks when the draft is more than a day old', () => {
     const old = { ...fresh(), updatedAt: Date.now() - 25 * 3600 * 1000 }
+    saveDraft(old)
     state.session = makeSession({ workout: old })
     renderPage()
     expect(screen.getByText(/more than a day ago/i)).toBeInTheDocument()

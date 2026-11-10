@@ -165,6 +165,36 @@ describe('time', () => {
   })
 })
 
+describe('while held (the resume prompt is asking)', () => {
+  it('leaves an expired countdown alone, then catches up when released', async () => {
+    const w = reduce(
+      createWorkout({
+        id: 'w1',
+        routine: routine(timed),
+        now: T0,
+        uid: () => 'u1',
+      }),
+      { type: 'startTimer', now: T0 },
+    )
+    saveDraft(w)
+    vi.setSystemTime(T0 + 120000)
+    const { result, rerender } = renderHook(
+      ({ hold }) => useWorkoutSession({ hold }),
+      { wrapper, initialProps: { hold: true } },
+    )
+    await flush()
+    expect(mocks.alert).not.toHaveBeenCalled()
+    expect(mocks.keep).not.toHaveBeenCalled()
+    expect(result.current.workout?.exercises[0].sets[0].actual).toBeNull()
+
+    rerender({ hold: false })
+    await flush()
+    expect(mocks.alert).toHaveBeenCalledTimes(1)
+    expect(mocks.keep).toHaveBeenCalledTimes(1)
+    expect(result.current.workout?.exercises[0].sets[0].actual).toBe(30)
+  })
+})
+
 describe('finishing and saving', () => {
   const finishOnce = (result: {
     current: ReturnType<typeof useWorkoutSession>

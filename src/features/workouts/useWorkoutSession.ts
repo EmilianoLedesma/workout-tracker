@@ -23,7 +23,7 @@ export type SaveStatus = 'idle' | 'saving' | 'saved' | 'error'
  * with the clock, the end-of-countdown alert, the screen lock and the final
  * save to the server. Screens only read this and call `act`.
  */
-export function useWorkoutSession() {
+export function useWorkoutSession({ hold = false }: { hold?: boolean } = {}) {
   const { session } = useSession()
   const saveSession = useSaveSession()
   const [workout, setWorkout] = useState<Workout | null>(() => loadDraft())
@@ -40,7 +40,7 @@ export function useWorkoutSession() {
   }, [workout])
 
   // Keep the screen on during a workout, and again after the page returns.
-  const live = !!workout && !workout.finish
+  const live = !!workout && !workout.finish && !hold
   useEffect(() => {
     if (!live) return
     let cancelled = false
@@ -68,7 +68,7 @@ export function useWorkoutSession() {
   // One alert per countdown, and a timed set completes when its time is up.
   const alerted = useRef<string | null>(null)
   useEffect(() => {
-    if (!workout?.timer || workout.paused || workout.finish) return
+    if (hold || !workout?.timer || workout.paused || workout.finish) return
     if (!isFinished(workout.timer, now)) return
     const key = JSON.stringify([workout.cursor, workout.phase, workout.timer])
     if (alerted.current !== key) {
@@ -81,7 +81,7 @@ export function useWorkoutSession() {
         w ? reduce(w, { type: 'completeSet', now: Date.now() }) : w,
       )
     }
-  }, [workout, now])
+  }, [workout, now, hold])
 
   const act = useCallback((action: DistributiveOmit<Action, 'now'>) => {
     setWorkout((w) =>

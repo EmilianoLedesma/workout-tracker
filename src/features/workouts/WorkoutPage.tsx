@@ -11,14 +11,25 @@ import { RestView } from './RestView'
 import { ResumePrompt } from './ResumePrompt'
 import { cta, SetView } from './SetView'
 import { useWorkoutSession } from './useWorkoutSession'
-import { isStale } from './workoutDraft'
+import { isStale, loadDraft } from './workoutDraft'
 
 const outline = 'min-h-11 w-full border-2 border-foreground font-bold'
 
 export default function WorkoutPage() {
   const { routineId = '' } = useParams()
+  // A draft found on arrival is continued without asking only when it belongs
+  // to this routine and is recent. A finished one is just waiting to be saved.
+  // While asking, the session hook is held so nothing runs behind the prompt.
+  const [asking, setAsking] = useState(() => {
+    const draft = loadDraft()
+    return (
+      !!draft &&
+      !draft.finish &&
+      (draft.routineId !== routineId || isStale(draft, Date.now()))
+    )
+  })
   const { workout, now, start, act, discard, save, summary } =
-    useWorkoutSession()
+    useWorkoutSession({ hold: asking })
   const { routine, error } = useRoutine(routineId)
   const catalog = useCatalog()
   const { settings } = useSettings()
@@ -29,15 +40,6 @@ export default function WorkoutPage() {
   const exercises = useMemo(
     () => new Map((exerciseList ?? []).map((e) => [e.id, e])),
     [exerciseList],
-  )
-
-  // A draft found on arrival is continued without asking only when it belongs
-  // to this routine and is recent. A finished one is just waiting to be saved.
-  const [asking, setAsking] = useState(
-    () =>
-      !!workout &&
-      !workout.finish &&
-      (workout.routineId !== routineId || isStale(workout, Date.now())),
   )
 
   // No draft: start the routine once. The workout then lives on its own
