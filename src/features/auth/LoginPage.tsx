@@ -41,30 +41,50 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="mx-auto max-w-sm p-6">
-      <h1 className="page-title">Workout Tracker</h1>
-      {sent ? (
-        <p className="mt-4">Check your email for the sign-in link.</p>
-      ) : (
-        <form onSubmit={onSubmit} className="mt-4 flex flex-col gap-3">
-          <label htmlFor="email" className="text-sm font-medium">
-            Email
-          </label>
-          <input
-            id="email"
-            type="text"
-            inputMode="email"
-            autoComplete="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="border-input h-11 rounded-md border px-3"
-          />
-          {error && <p role="alert">{error}</p>}
-          <Button type="submit" disabled={sending} className="h-11">
-            Send magic link
-          </Button>
-        </form>
-      )}
+    <div className="bg-grid bg-background min-h-dvh">
+      <main className="mx-auto flex min-h-dvh max-w-md flex-col justify-center px-5 py-10">
+        <p className="font-display text-accent-text text-xl font-black tracking-wider uppercase">
+          Sign in
+        </p>
+        <h1 className="font-display mt-4 text-[clamp(3.5rem,16vw,6rem)] leading-[0.86] font-black tracking-tight uppercase">
+          Workout Tracker
+        </h1>
+        {sent ? (
+          <p className="border-accent-fill mt-6 border-l-4 pl-4 text-base">
+            Check your email for the sign-in link.
+          </p>
+        ) : (
+          <form onSubmit={onSubmit} className="mt-8 flex flex-col gap-3">
+            <label htmlFor="email" className="text-sm font-medium">
+              Email
+            </label>
+            <input
+              id="email"
+              type="text"
+              inputMode="email"
+              autoComplete="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="border-foreground bg-card focus-visible:outline-accent-text h-12 rounded-sm border-2 px-3 text-base outline-offset-2 focus-visible:outline-2"
+            />
+            {error && (
+              <p role="alert" className="text-destructive text-sm">
+                {error}
+              </p>
+            )}
+            <Button
+              type="submit"
+              disabled={sending}
+              className="font-display h-12 text-xl font-bold tracking-wider uppercase"
+            >
+              Send magic link
+            </Button>
+            <p className="text-muted-foreground text-sm">
+              You stay signed in on this device until you sign out.
+            </p>
+          </form>
+        )}
+      </main>
     </div>
   )
 }

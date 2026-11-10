@@ -12,6 +12,15 @@ export function getSupabase(): SupabaseClient {
   client = createClient(
     result.env.supabaseUrl,
     result.env.supabasePublishableKey,
+    {
+      // The session lives in the browser's storage and the access token is
+      // refreshed automatically, so the owner stays signed in across visits.
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+        detectSessionInUrl: true,
+      },
+    },
   )
   return client
 }
