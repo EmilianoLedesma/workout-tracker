@@ -1,5 +1,5 @@
 // Run: node --env-file=.env scripts/verify-rls.mjs
-// Checks that an unauthenticated client cannot read or write user_settings.
+// Checks that an unauthenticated client cannot read or write any user table.
 const url = process.env.VITE_SUPABASE_URL
 const key = process.env.VITE_SUPABASE_PUBLISHABLE_KEY
 if (!url || !key) {
@@ -9,36 +9,41 @@ if (!url || !key) {
   process.exit(1)
 }
 
+const TABLES = ['user_settings', 'routines', 'routine_exercises']
 const headers = {
   apikey: key,
   'Content-Type': 'application/json',
   Prefer: 'return=minimal',
 }
-const endpoint = `${url}/rest/v1/user_settings`
+const ANON_USER = '00000000-0000-0000-0000-000000000000'
 
-const select = await fetch(`${endpoint}?select=*`, { headers })
-if (select.status === 404) {
-  console.error('FAIL: user_settings not found, apply the migration first')
-  process.exit(1)
-}
-const rows = select.ok ? await select.json() : null
-const insert = await fetch(endpoint, {
-  method: 'POST',
-  headers,
-  body: JSON.stringify({ user_id: '00000000-0000-0000-0000-000000000000' }),
-})
+for (const table of TABLES) {
+  const endpoint = `${url}/rest/v1/${table}`
 
-// A bad key, paused project or server error must not look like "RLS works".
-if (!select.ok) {
-  console.error(`FAIL: read request was rejected with HTTP ${select.status}`)
-  process.exit(1)
-}
-const readBlocked = Array.isArray(rows) && rows.length === 0
-const writeBlocked = insert.status === 401 || insert.status === 403
+  const select = await fetch(`${endpoint}?select=*`, { headers })
+  if (select.status === 404) {
+    console.error(`FAIL: ${table} not found, apply the migration first`)
+    process.exit(1)
+  }
+  // A bad key, paused project or server error must not look like "RLS works".
+  if (!select.ok) {
+    console.error(`FAIL: ${table} read was rejected with HTTP ${select.status}`)
+    process.exit(1)
+  }
+  const rows = await select.json()
+  const insert = await fetch(endpoint, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({ user_id: ANON_USER }),
+  })
 
-if (readBlocked && writeBlocked) {
-  console.log('PASS: anonymous read returns no rows, anonymous insert rejected')
-} else {
-  console.error(`FAIL: readBlocked=${readBlocked} writeBlocked=${writeBlocked}`)
-  process.exit(1)
+  const readBlocked = Array.isArray(rows) && rows.length === 0
+  const writeBlocked = insert.status === 401 || insert.status === 403
+  if (!(readBlocked && writeBlocked)) {
+    console.error(
+      `FAIL: ${table} readBlocked=${readBlocked} writeBlocked=${writeBlocked}`,
+    )
+    process.exit(1)
+  }
+  console.log(`PASS: ${table}: anonymous read empty, anonymous insert rejected`)
 }
