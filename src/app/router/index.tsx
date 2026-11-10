@@ -9,6 +9,7 @@ import { useSession } from '@/features/auth/useSession'
 import { RequireAuth } from '@/features/auth/RequireAuth'
 import NotFoundPage from '@/features/NotFoundPage'
 import ProgressPage from '@/features/progress/ProgressPage'
+import RoutineEditorPage from '@/features/routines/RoutineEditorPage'
 import RoutinesPage from '@/features/routines/RoutinesPage'
 import CreditsPage from '@/features/settings/CreditsPage'
 import SettingsPage from '@/features/settings/SettingsPage'
@@ -48,6 +49,8 @@ export const routes: RouteObject[] = [
     ),
     children: [
       { path: 'routines', element: <RoutinesPage /> },
+      { path: 'routines/new', element: <RoutineEditorPage /> },
+      { path: 'routines/:routineId', element: <RoutineEditorPage /> },
       { path: 'workout/:routineId', element: <WorkoutPage /> },
       { path: 'progress', element: <ProgressPage /> },
       { path: 'settings', element: <SettingsPage /> },

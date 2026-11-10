@@ -22,6 +22,19 @@ vi.mock('@/features/settings/useSettings', () => ({
     error: null,
   }),
 }))
+vi.mock('@/features/routines/useRoutines', () => ({
+  useRoutines: () => ({
+    routines: [],
+    isLoading: true,
+    error: null,
+    refetch: () => {},
+  }),
+  useRoutine: () => ({ routine: undefined, isLoading: true, error: null }),
+  useSeedStarters: () => ({ mutate: () => {} }),
+  useDeleteRoutine: () => ({ mutate: () => {} }),
+  useDuplicateRoutine: () => ({ mutate: () => {} }),
+  useSaveRoutine: () => ({ mutateAsync: async () => 'id' }),
+}))
 vi.mock('@/lib/catalog/loadCredits', () => ({
   loadCredits: () => new Promise(() => {}),
 }))
@@ -111,5 +124,22 @@ describe('credits link', () => {
       'href',
       '/credits',
     )
+  })
+})
+
+describe('routine editor route', () => {
+  it('opens the new-routine editor when signed in', () => {
+    renderAt('/routines/new')
+    expect(
+      screen.getByRole('heading', { name: 'New routine' }),
+    ).toBeInTheDocument()
+  })
+
+  it('sends a signed-out visitor to the login page', () => {
+    renderAt('/routines/new', null)
+    expect(screen.queryByRole('heading', { name: 'New routine' })).toBeNull()
+    expect(
+      screen.getByRole('heading', { name: 'Workout Tracker' }),
+    ).toBeInTheDocument()
   })
 })
